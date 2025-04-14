@@ -1,14 +1,18 @@
 const express = require('express');
-// Aca se van a importar todos los routers que se van a utilizar en la api
-// Ejemplo:
-// const usersRouter = require('./usersRouter');
 
+const actividadRouter = require('./actividadRouter');
+const horarioActividadRouter = require('./horarioActividadRouter');
+const inscripcionRouter = require('./inscripcionRouter');
+const participanteRouter = require('./participanteRouter');
 
 const routerApi = (app) => {
   const router = express.Router();
-  app.use('/api/v1', router)
-  // Ejemplo:
-  // router.use('/users', usersRouter);
-}
+  app.use('/api/v1', router);
+
+  router.use('/actividades', actividadRouter);
+  router.use('/horarios-actividades', horarioActividadRouter);
+  router.use('/inscripciones', inscripcionRouter);
+  router.use('/participantes', participanteRouter);
+};
 
 module.exports = routerApi;
