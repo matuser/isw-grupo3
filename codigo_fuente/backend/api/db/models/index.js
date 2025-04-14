@@ -1,12 +1,19 @@
-// const { User, UserSchema } = require('./userModel');
-// Aca arriba se importan los modelos y sus esquemas (estructura que deben cumplir)
+const { Actividad, ActividadSchema } = require('./actividadModel');
+const { HorarioActividad, HorarioActividadSchema } = require('./horarioActividadModel');
+const { Inscripcion, InscripcionSchema } = require('./inscripcionModel');
+const { Participante, ParticipanteSchema } = require('./participanteModel');
 
 function setupModels(sequelize) {
-  // En esta funcion se inicializan los modelos y se asocian entre ellos
+  Actividad.init(ActividadSchema, Actividad.config(sequelize));
+  HorarioActividad.init(HorarioActividadSchema, HorarioActividad.config(sequelize));
+  Inscripcion.init(InscripcionSchema, Inscripcion.config(sequelize));
+  Participante.init(ParticipanteSchema, Participante.config(sequelize));
 
-  // Un ejemplo de esto es lo siguiente:
-  // User.init(UserSchema, User.config(sequelize));
-  // User.associate(sequelize.models);
-  return
+  // Relaciones
+  Actividad.associate(sequelize.models);
+  HorarioActividad.associate(sequelize.models);
+  Inscripcion.associate(sequelize.models);
+  Participante.associate(sequelize.models);
 }
+
 module.exports = setupModels;
