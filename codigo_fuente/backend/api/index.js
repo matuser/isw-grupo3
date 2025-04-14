@@ -24,18 +24,18 @@ app.use(errorHandler); // Ya que el errorHandler NO usa next, si se pone primero
 
 
 // Prueba de la conexion con la BD
-```
-const sequelize = require('./libs/sequelize');
+// ```
+// const sequelize = require('./libs/sequelize');
 
-(async () => {
-  try {
-    await sequelize.authenticate();
-    console.log('✅ Conexión a PostgreSQL establecida correctamente.');
-  } catch (error) {
-    console.error('❌ No se pudo conectar a la base de datos:', error);
-  }
-})();
-```
+// (async () => {
+//   try {
+//     await sequelize.authenticate();
+//     console.log('✅ Conexión a PostgreSQL establecida correctamente.');
+//   } catch (error) {
+//     console.error('❌ No se pudo conectar a la base de datos:', error);
+//   }
+// })();
+// ```
 
 if (!module.parent) {
   const port = process.env.PORT || 3000;

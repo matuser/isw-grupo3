@@ -1,0 +1,2034 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+<additional_info>
+
+</additional_info>
+
+</file_summary>
+
+<directory_structure>
+backend/.editorconfig
+backend/.eslintrc.json
+backend/.gitignore
+backend/api/config/config.js
+backend/api/db/config.js
+backend/api/db/models/actividadModel.js
+backend/api/db/models/horarioActividadModel.js
+backend/api/db/models/index.js
+backend/api/db/models/inscripcionModel.js
+backend/api/db/models/participanteModel.js
+backend/api/index.js
+backend/api/libs/sequelize.js
+backend/api/middlewares/errorHandler.js
+backend/api/middlewares/validatorHandler.js
+backend/api/routes/actividadRouter.js
+backend/api/routes/horarioActividadRouter.js
+backend/api/routes/index.js
+backend/api/routes/inscripcionRouter.js
+backend/api/routes/participanteRouter.js
+backend/api/schemas/actividadSchema.js
+backend/api/schemas/horarioActividadSchema.js
+backend/api/schemas/inscripcionSchema.js
+backend/api/schemas/participanteSchema.js
+backend/api/services/actividadService.js
+backend/api/services/horarioActividadService.js
+backend/api/services/inscripcionService.js
+backend/api/services/participanteService.js
+backend/package.json
+frontend/.gitignore
+frontend/eslint.config.js
+frontend/index.html
+frontend/package.json
+frontend/public/vite.svg
+frontend/README.md
+frontend/src/App.css
+frontend/src/App.tsx
+frontend/src/assets/react.svg
+frontend/src/index.css
+frontend/src/main.tsx
+frontend/src/pages/Inicio.tsx
+frontend/src/vite-env.d.ts
+frontend/tsconfig.app.json
+frontend/tsconfig.json
+frontend/tsconfig.node.json
+frontend/vite.config.ts
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="backend/.editorconfig">
+# Editor configuration, see https://editorconfig.org
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.js]
+quote_type = single
+
+[*.md]
+max_line_length = off
+trim_trailing_whitespace = false
+</file>
+
+<file path="backend/.eslintrc.json">
+{
+  "parserOptions": {
+    "ecmaVersion": 2018
+  },
+  "extends": ["eslint:recommended", "prettier"],
+  "env": {
+    "es6": true,
+    "node": true,
+    "jest": true
+  },
+  "rules": {
+    "no-console": "warn"
+  }
+}
+</file>
+
+<file path="backend/.gitignore">
+# Created by https://www.toptal.com/developers/gitignore/api/node,macos,windows,linux
+# Edit at https://www.toptal.com/developers/gitignore?templates=node,macos,windows,linux
+.qodo
+### Linux ###
+*~
+
+# temporary files which can be created if a process still has a handle open of a deleted file
+.fuse_hidden*
+
+# KDE directory preferences
+.directory
+
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
+
+# .nfs files are created when an open file is removed but is still being accessed
+.nfs*
+
+### macOS ###
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \r
+Icon
+
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+### macOS Patch ###
+# iCloud generated files
+*.icloud
+
+### Node ###
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Directory for instrumented libs generated by jscoverage/JSCover
+lib-cov
+
+# Coverage directory used by tools like istanbul
+coverage
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
+.grunt
+
+# Bower dependency directory (https://bower.io/)
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons (https://nodejs.org/api/addons.html)
+build/Release
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Snowpack dependency directory (https://snowpack.dev/)
+web_modules/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+# Comment in the public line in if your project uses Gatsby and not Next.js
+# https://nextjs.org/blog/next-9-1#public-directory-support
+# public
+
+# vuepress build output
+.vuepress/dist
+
+# vuepress v2.x temp and cache directory
+.temp
+
+# Docusaurus cache and generated files
+.docusaurus
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+### Node Patch ###
+# Serverless Webpack directories
+.webpack/
+
+# Optional stylelint cache
+
+# SvelteKit build / generate output
+.svelte-kit
+
+### Windows ###
+# Windows thumbnail cache files
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+
+# Dump file
+*.stackdump
+
+# Folder config file
+[Dd]esktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# End of https://www.toptal.com/developers/gitignore/api/node,macos,windows,linux
+</file>
+
+<file path="backend/api/config/config.js">
+require('dotenv').config();
+
+// DESPUES VER TEMA PUERTOS EN DOCKER Y EN EL DOCKER-COMPOSE
+const config = {
+  env: process.env.NODE_ENV || 'development',
+  port: process.env.PORT || 3000,
+  dbUser: process.env.DB_USER || 'admin',
+  dbPassword: process.env.DB_PASSWORD,
+  dbHost: process.env.DB_HOST,
+  dbPort: process.env.DB_PORT || 5432,
+  dbName: process.env.DB_NAME || 'ecoharmony'
+}
+
+module.exports = config;
+</file>
+
+<file path="backend/api/db/config.js">
+const config = require('../config/config');
+
+const USER = encodeURIComponent(config.dbUser);
+const PASSWORD = encodeURIComponent(config.dbPassword);
+const URI = `postgres://${USER}:${PASSWORD}@${config.dbHost}:${config.dbPort}/${config.dbName}`;
+
+module.exports = {
+  development: {
+    url: URI,
+    dialect: 'postgres',
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
+    }
+  },
+  production: {
+    url: URI,
+    dialect: 'postgres',
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
+    }
+  }
+};
+</file>
+
+<file path="backend/api/db/models/actividadModel.js">
+const { Model, DataTypes } = require('sequelize');
+
+const ACTIVIDAD_TABLE = 'actividades';
+
+const ActividadSchema = {
+  id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  nombre: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  terminos_condiciones: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  requiere_talla: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  }
+};
+
+class Actividad extends Model {
+  static associate(models) {
+    this.hasMany(models.HorarioActividad, {
+      as: 'horarios',
+      foreignKey: 'id_actividad'
+    });
+  }
+
+  static config(sequelize) {
+    return {
+      sequelize,
+      tableName: ACTIVIDAD_TABLE,
+      modelName: 'Actividad',
+      timestamps: false,
+      underscored: true
+    };
+  }
+}
+
+module.exports = { ACTIVIDAD_TABLE, ActividadSchema, Actividad };
+</file>
+
+<file path="backend/api/db/models/horarioActividadModel.js">
+// api/db/models/horarioActividad.model.js
+const { Model, DataTypes } = require('sequelize');
+
+const HORARIO_ACTIVIDAD_TABLE = 'horarios_actividades';
+
+const HorarioActividadSchema = {
+  id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  id_actividad: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'actividades',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL'
+  },
+  fecha: {
+    type: DataTypes.DATEONLY,
+    allowNull: false
+  },
+  hora_inicio: {
+    type: DataTypes.TIME,
+    allowNull: false
+  },
+  hora_fin: {
+    type: DataTypes.TIME,
+    allowNull: false
+  },
+  cupo_disponible: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  cupo_maximo: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  }
+};
+
+class HorarioActividad extends Model {
+  static associate(models) {
+    this.belongsTo(models.Actividad, {
+      as: 'actividad',
+      foreignKey: 'id_actividad'
+    });
+  }
+
+  static config(sequelize) {
+    return {
+      sequelize,
+      tableName: HORARIO_ACTIVIDAD_TABLE,
+      modelName: 'HorarioActividad',
+      timestamps: false,
+      underscored: true
+    };
+  }
+}
+
+module.exports = { HORARIO_ACTIVIDAD_TABLE, HorarioActividadSchema, HorarioActividad };
+</file>
+
+<file path="backend/api/db/models/index.js">
+const { Actividad, ActividadSchema } = require('./actividadModel');
+const { HorarioActividad, HorarioActividadSchema } = require('./horarioActividadModel');
+const { Inscripcion, InscripcionSchema } = require('./inscripcionModel');
+const { Participante, ParticipanteSchema } = require('./participanteModel');
+
+function setupModels(sequelize) {
+  Actividad.init(ActividadSchema, Actividad.config(sequelize));
+  HorarioActividad.init(HorarioActividadSchema, HorarioActividad.config(sequelize));
+  Inscripcion.init(InscripcionSchema, Inscripcion.config(sequelize));
+  Participante.init(ParticipanteSchema, Participante.config(sequelize));
+
+  // Relaciones
+  Actividad.associate(sequelize.models);
+  HorarioActividad.associate(sequelize.models);
+  Inscripcion.associate(sequelize.models);
+  Participante.associate(sequelize.models);
+}
+
+module.exports = setupModels;
+</file>
+
+<file path="backend/api/db/models/inscripcionModel.js">
+const { Model, DataTypes } = require('sequelize');
+
+const INSCRIPCION_TABLE = 'inscripciones';
+
+const InscripcionSchema = {
+  id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  id_horario: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'horarios_actividades',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL'
+  },
+  cantidad_personas: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  fecha_inscripcion: {
+    type: DataTypes.DATEONLY,
+    allowNull: false
+  }
+};
+
+class Inscripcion extends Model {
+  static associate(models) {
+    this.belongsTo(models.HorarioActividad, {
+      as: 'horario',
+      foreignKey: 'id_horario'
+    });
+
+    this.hasMany(models.Participante, {
+      as: 'participantes',
+      foreignKey: 'id_inscripcion'
+    });
+  }
+
+  static config(sequelize) {
+    return {
+      sequelize,
+      tableName: INSCRIPCION_TABLE,
+      modelName: 'Inscripcion',
+      timestamps: false,
+      underscored: true
+    };
+  }
+}
+
+module.exports = { INSCRIPCION_TABLE, InscripcionSchema, Inscripcion };
+</file>
+
+<file path="backend/api/db/models/participanteModel.js">
+const { Model, DataTypes } = require('sequelize');
+
+const PARTICIPANTE_TABLE = 'participantes';
+
+const ParticipanteSchema = {
+  dni: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    primaryKey: true
+  },
+  id_inscripcion: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    primaryKey: true,
+    references: {
+      model: 'inscripciones',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL'
+  },
+  nombre: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  edad: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  talla_vestimenta: {
+    type: DataTypes.STRING,
+    allowNull: true
+  }
+};
+
+class Participante extends Model {
+  static associate(models) {
+    this.belongsTo(models.Inscripcion, {
+      as: 'inscripcion',
+      foreignKey: 'id_inscripcion'
+    });
+  }
+
+  static config(sequelize) {
+    return {
+      sequelize,
+      tableName: PARTICIPANTE_TABLE,
+      modelName: 'Participante',
+      timestamps: false,
+      underscored: true
+    };
+  }
+}
+
+module.exports = { PARTICIPANTE_TABLE, ParticipanteSchema, Participante };
+</file>
+
+<file path="backend/api/index.js">
+const express = require('express');
+const routerApi = require('./routes');
+const cors = require('cors');
+
+const { logErrors, errorHandler, boomErrorHandler, ORMErrorHandler } = require('./middlewares/errorHandler');
+
+const app = express();
+
+app.use(express.json()) // Middleware para parsear el body de las peticiones a JSON. Si no se pone, no se puede acceder al body de la peticion
+
+app.use(cors());
+
+app.get('/api', (req, res) => {
+  res.send('Se inicio el back');
+})
+
+routerApi(app);
+
+// Aca abajo se setean los middleware de error. Se pueden crear tantos como se necesiten, pero siempre deben ir en el mismo orden que se ejecutan. El orden es importante, ya que si un middleware no llama a next(), no se ejecuta el siguiente middleware.
+app.use(logErrors); // Segun el orden que se coloquen es el orden en el cual se ejecutan
+app.use(ORMErrorHandler)
+app.use(boomErrorHandler)
+app.use(errorHandler); // Ya que el errorHandler NO usa next, si se pone primero no ejecutaria el siguiente middleware
+
+
+// Prueba de la conexion con la BD
+```
+const sequelize = require('./libs/sequelize');
+
+(async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('✅ Conexión a PostgreSQL establecida correctamente.');
+  } catch (error) {
+    console.error('❌ No se pudo conectar a la base de datos:', error);
+  }
+})();
+```
+
+if (!module.parent) {
+  const port = process.env.PORT || 3000;
+  app.locals.fechaInicio = new Date();
+  app.listen(port, () => {
+    console.log(`Página inicializada en el puerto ${port}`);
+  });
+}
+
+module.exports = app; // Exportamos la aplicacion para ser utilizada en otros archivos. Si utilizamos vercel, este maneja la ruta automaticamente, no se utiliza app.listen()
+</file>
+
+<file path="backend/api/libs/sequelize.js">
+const { Sequelize } = require('sequelize');
+const config = require('../config/config');
+const setupModels = require('../db/models');
+
+const USER = encodeURIComponent(config.dbUser);
+const PASSWORD = encodeURIComponent(config.dbPassword);
+const URI = `postgres://${USER}:${PASSWORD}@${config.dbHost}:${config.dbPort}/${config.dbName}`;
+
+const sequelize = new Sequelize(URI, {
+  dialect: 'postgres',
+  logging: true,
+  define: {
+    timestamps: true,
+    underscored: true,
+    freezeTableName: true,
+  },
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false
+    }
+  }
+});
+
+setupModels(sequelize);
+
+module.exports = sequelize;
+</file>
+
+<file path="backend/api/middlewares/errorHandler.js">
+// Este archivo tiene como objetivo definir los middlewares que se encargan del manejo de errores, en base al tipo de error
+
+function logErrors(err, req, res, next) {
+  console.error(err); //mostrar el error en servidor para poder monitorearlo
+  next(err); //importante para saber que se esta enviando a un middleware de tipo error, si no tiene el error dentro entonces se esta mandando a uno normal
+}
+
+// Crear formato para devolverlo al cliente que se complementa con la función anterior:
+function errorHandler(err, req, res, next) { //así no se utilice next en el código se debe poner aqui, ya que un middleware de error tiene los cuatro parámetros
+  res.status(500).json({ //indicar que el error es estatus 500 Internal Server Error
+    message: err.message, //mostrar al cliente el mensaje de error
+    stack: err.stack, //mostrar info del error (donde ocurrio, que archivo, etc)
+  })
+}
+
+// Cannot set headers after they are sent to the client
+
+function boomErrorHandler(err, req, res, next) { //así no se utilice next en el código se debe poner aqui, ya que un middleware de error tiene los cuatro parámetros
+  if (err.isBoom) {
+    const { output } = err;
+    res.status(output.statusCode).json(output.payload);
+  } else{
+    next(err);
+  }
+}
+
+// Ejemplo de código de middleware para manejar errores de ORM
+function ORMErrorHandler(err, req, res, next) {
+  if (err instanceof ValidationError) {
+    return res.status(409).json({
+      type: err.name,
+      message: err.message,
+    });
+  }
+  next(err);
+}
+
+module.exports = { logErrors, errorHandler, boomErrorHandler, ORMErrorHandler }; //exportarlo como modulo
+</file>
+
+<file path="backend/api/middlewares/validatorHandler.js">
+// En este archivo se valida los datos ingresados en un post o put, para asegurarse que cumplan con el esquema definido en el modelo de datos. Se utiliza Joi para validar los datos y se define un middleware que se encarga de validar los datos antes de enviarlos a la base de datos. Si los datos no cumplen con el esquema, se devuelve un error 400 Bad Request al cliente.
+
+const boom = require('@hapi/boom');
+
+function validatorHandler(schema, property) {
+  return (req, res, next) => {
+    const data = req[property]
+    const {error} = schema.validate(data, {abortEarly: false}); // abortEarly: false para que muestre todos los errores, y no solo el primero
+    if (error) {
+      next(boom.badRequest(error));
+    } else {
+      next();
+    }
+  }
+}
+
+module.exports = validatorHandler;
+</file>
+
+<file path="backend/api/routes/actividadRouter.js">
+const express = require('express');
+
+const ActividadService = require('../services/actividadService');
+const validatorHandler = require('../middlewares/validatorHandler');
+const {
+  createActividadSchema,
+  updateActividadSchema,
+  getActividadSchema
+} = require('../schemas/actividadSchema');
+
+const router = express.Router();
+const service = new ActividadService();
+
+router.get('/', async (req, res, next) => {
+  try {
+    const actividades = await service.find();
+    res.json(actividades);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/:id',
+  validatorHandler(getActividadSchema, 'params'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const actividad = await service.findOne(id);
+      res.json(actividad);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.post('/',
+  validatorHandler(createActividadSchema, 'body'),
+  async (req, res, next) => {
+    try {
+      const body = req.body;
+      const newActividad = await service.create(body);
+      res.status(201).json(newActividad);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.patch('/:id',
+  validatorHandler(getActividadSchema, 'params'),
+  validatorHandler(updateActividadSchema, 'body'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const body = req.body;
+      const actividad = await service.update(id, body);
+      res.json(actividad);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.delete('/:id',
+  validatorHandler(getActividadSchema, 'params'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      await service.delete(id);
+      res.status(201).json({ id });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+module.exports = router;
+</file>
+
+<file path="backend/api/routes/horarioActividadRouter.js">
+const express = require('express');
+
+const HorarioActividadService = require('./../services/horarioActividadService');
+const validatorHandler = require('./../middlewares/validatorHandler');
+const {
+  createHorarioActividadSchema,
+  updateHorarioActividadSchema,
+  getHorarioActividadSchema,
+} = require('./../schemas/horarioActividadSchema');
+
+const router = express.Router();
+const service = new HorarioActividadService();
+
+router.get('/', async (req, res, next) => {
+  try {
+    const items = await service.find();
+    res.json(items);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/:id',
+  validatorHandler(getHorarioActividadSchema, 'params'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const item = await service.findOne(id);
+      res.json(item);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.post('/',
+  validatorHandler(createHorarioActividadSchema, 'body'),
+  async (req, res, next) => {
+    try {
+      const body = req.body;
+      const newItem = await service.create(body);
+      res.status(201).json(newItem);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.patch('/:id',
+  validatorHandler(getHorarioActividadSchema, 'params'),
+  validatorHandler(updateHorarioActividadSchema, 'body'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const body = req.body;
+      const item = await service.update(id, body);
+      res.json(item);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.delete('/:id',
+  validatorHandler(getHorarioActividadSchema, 'params'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      await service.delete(id);
+      res.status(201).json({ id });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+module.exports = router;
+</file>
+
+<file path="backend/api/routes/index.js">
+const express = require('express');
+
+const actividadRouter = require('./actividadRouter');
+const horarioActividadRouter = require('./horarioActividadRouter');
+const inscripcionRouter = require('./inscripcionRouter');
+const participanteRouter = require('./participanteRouter');
+
+const routerApi = (app) => {
+  const router = express.Router();
+  app.use('/api/v1', router);
+
+  router.use('/actividades', actividadRouter);
+  router.use('/horarios-actividades', horarioActividadRouter);
+  router.use('/inscripciones', inscripcionRouter);
+  router.use('/participantes', participanteRouter);
+};
+
+module.exports = routerApi;
+</file>
+
+<file path="backend/api/routes/inscripcionRouter.js">
+const express = require('express');
+
+const InscripcionService = require('./../services/inscripcionService');
+const validatorHandler = require('./../middlewares/validatorHandler');
+const {
+  createInscripcionSchema,
+  updateInscripcionSchema,
+  getInscripcionSchema,
+} = require('./../schemas/inscripcionSchema');
+
+const router = express.Router();
+const service = new InscripcionService();
+
+router.get('/', async (req, res, next) => {
+  try {
+    const inscripciones = await service.find();
+    res.json(inscripciones);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/:id',
+  validatorHandler(getInscripcionSchema, 'params'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const inscripcion = await service.findOne(id);
+      res.json(inscripcion);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.post('/',
+  validatorHandler(createInscripcionSchema, 'body'),
+  async (req, res, next) => {
+    try {
+      const body = req.body;
+      const newInscripcion = await service.create(body);
+      res.status(201).json(newInscripcion);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.patch('/:id',
+  validatorHandler(getInscripcionSchema, 'params'),
+  validatorHandler(updateInscripcionSchema, 'body'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const body = req.body;
+      const inscripcion = await service.update(id, body);
+      res.json(inscripcion);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.delete('/:id',
+  validatorHandler(getInscripcionSchema, 'params'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      await service.delete(id);
+      res.status(201).json({ id });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+module.exports = router;
+</file>
+
+<file path="backend/api/routes/participanteRouter.js">
+const express = require('express');
+
+const ParticipanteService = require('./../services/participanteService');
+const validatorHandler = require('./../middlewares/validatorHandler');
+const {
+  createParticipanteSchema,
+  updateParticipanteSchema,
+  getParticipanteSchema
+} = require('./../schemas/participanteSchema');
+
+const router = express.Router();
+const service = new ParticipanteService();
+
+router.get('/', async (req, res, next) => {
+  try {
+    const participantes = await service.find();
+    res.json(participantes);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/:dni/:id_inscripcion',
+  validatorHandler(getParticipanteSchema, 'params'),
+  async (req, res, next) => {
+    try {
+      const { dni, id_inscripcion } = req.params;
+      const participante = await service.findOne({ dni, id_inscripcion });
+      res.json(participante);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.post('/',
+  validatorHandler(createParticipanteSchema, 'body'),
+  async (req, res, next) => {
+    try {
+      const body = req.body;
+      const newParticipante = await service.create(body);
+      res.status(201).json(newParticipante);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.patch('/:dni/:id_inscripcion',
+  validatorHandler(getParticipanteSchema, 'params'),
+  validatorHandler(updateParticipanteSchema, 'body'),
+  async (req, res, next) => {
+    try {
+      const { dni, id_inscripcion } = req.params;
+      const body = req.body;
+      const participante = await service.update({ dni, id_inscripcion }, body);
+      res.json(participante);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.delete('/:dni/:id_inscripcion',
+  validatorHandler(getParticipanteSchema, 'params'),
+  async (req, res, next) => {
+    try {
+      const { dni, id_inscripcion } = req.params;
+      await service.delete({ dni, id_inscripcion });
+      res.status(201).json({ dni, id_inscripcion });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+module.exports = router;
+</file>
+
+<file path="backend/api/schemas/actividadSchema.js">
+const Joi = require('joi');
+
+const id = Joi.number().integer();
+const nombre = Joi.string().min(3).max(100);
+const terminos_condiciones = Joi.string().allow('', null); 
+const requiere_talla = Joi.boolean();
+
+const createActividadSchema = Joi.object({
+  nombre: nombre.required(),
+  terminos_condiciones: terminos_condiciones,
+  requiere_talla: requiere_talla.required()
+});
+
+const updateActividadSchema = Joi.object({
+  nombre: nombre,
+  terminos_condiciones: terminos_condiciones,
+  requiere_talla: requiere_talla
+});
+
+const getActividadSchema = Joi.object({
+  id: id.required()
+});
+
+module.exports = {
+  createActividadSchema,
+  updateActividadSchema,
+  getActividadSchema
+};
+</file>
+
+<file path="backend/api/schemas/horarioActividadSchema.js">
+const Joi = require('joi');
+
+const id = Joi.number().integer();
+const id_actividad = Joi.number().integer();
+const fecha = Joi.date().required();
+const hora_inicio = Joi.string().pattern(/^([0-1]\d|2[0-3]):([0-5]\d)$/).required();
+const hora_fin = Joi.string().pattern(/^([0-1]\d|2[0-3]):([0-5]\d)$/).required();
+const cupo_disponible = Joi.number().integer().min(0).required();
+const cupo_maximo = Joi.number().integer().min(1).required();
+
+const createHorarioActividadSchema = Joi.object({
+  id_actividad: id_actividad.required(),
+  fecha,
+  hora_inicio,
+  hora_fin,
+  cupo_disponible,
+  cupo_maximo
+}).custom((obj, helpers) => {
+  if (obj.cupo_disponible > obj.cupo_maximo) {
+    return helpers.message('"cupo_disponible" no puede ser mayor que "cupo_maximo"');
+  }
+  return obj;
+});
+
+const updateHorarioActividadSchema = Joi.object({
+  id_actividad: id_actividad,
+  fecha,
+  hora_inicio,
+  hora_fin,
+  cupo_disponible: Joi.number().integer().min(0),
+  cupo_maximo: Joi.number().integer().min(1)
+}).custom((obj, helpers) => {
+  if (obj.cupo_disponible !== undefined && obj.cupo_maximo !== undefined && obj.cupo_disponible > obj.cupo_maximo) {
+    return helpers.message('"cupo_disponible" no puede ser mayor que "cupo_maximo"');
+  }
+  return obj;
+});
+
+const getHorarioActividadSchema = Joi.object({
+  id: id.required()
+});
+
+module.exports = {
+  createHorarioActividadSchema,
+  updateHorarioActividadSchema,
+  getHorarioActividadSchema
+};
+</file>
+
+<file path="backend/api/schemas/inscripcionSchema.js">
+const Joi = require('joi');
+
+const id = Joi.number().integer();
+const id_horario = Joi.number().integer();
+const cantidad_personas = Joi.number().integer().min(1);
+const fecha_inscripcion = Joi.date();
+
+const createInscripcionSchema = Joi.object({
+  id_horario: id_horario.required(),
+  cantidad_personas: cantidad_personas.required(),
+  fecha_inscripcion: fecha_inscripcion.required()
+});
+
+const updateInscripcionSchema = Joi.object({
+  id_horario: id_horario,
+  cantidad_personas: cantidad_personas,
+  fecha_inscripcion: fecha_inscripcion
+});
+
+const getInscripcionSchema = Joi.object({
+  id: id.required()
+});
+
+module.exports = {
+  createInscripcionSchema,
+  updateInscripcionSchema,
+  getInscripcionSchema
+};
+</file>
+
+<file path="backend/api/schemas/participanteSchema.js">
+const Joi = require('joi');
+
+const dni = Joi.string().required();
+const id_inscripcion = Joi.number().integer().required();
+const nombre = Joi.string().min(1);
+const edad = Joi.number().integer().min(0);
+const talla_vestimenta = Joi.string().allow('', null);
+
+const createParticipanteSchema = Joi.object({
+  dni: dni,
+  id_inscripcion: id_inscripcion,
+  nombre: nombre.required(),
+  edad: edad.required(),
+  talla_vestimenta: talla_vestimenta
+});
+
+const updateParticipanteSchema = Joi.object({
+  nombre: nombre,
+  edad: edad,
+  talla_vestimenta: talla_vestimenta
+});
+
+const getParticipanteSchema = Joi.object({
+  dni: dni,
+  id_inscripcion: id_inscripcion
+});
+
+module.exports = {
+  createParticipanteSchema,
+  updateParticipanteSchema,
+  getParticipanteSchema
+};
+</file>
+
+<file path="backend/api/services/actividadService.js">
+const boom = require('@hapi/boom');
+
+const { models } = require('../libs/sequelize');
+
+class ActividadService {
+  constructor() {}
+
+  async create(data) {
+    const newActividad = await models.Actividad.create(data);
+    return newActividad;
+  }
+
+  async find() {
+    const actividades = await models.Actividad.findAll({
+      include: ['horarios'] // Esto hace match con el alias definido en el modelo
+    });
+    return actividades;
+  }
+
+  async findOne(id) {
+    const actividad = await models.Actividad.findByPk(id, {
+      include: ['horarios']
+    });
+    if (!actividad) {
+      throw boom.notFound('Actividad no encontrada');
+    }
+    return actividad;
+  }
+
+  async update(id, changes) {
+    const actividad = await this.findOne(id);
+    const rta = await actividad.update(changes);
+    return rta;
+  }
+
+  async delete(id) {
+    const actividad = await this.findOne(id);
+    await actividad.destroy();
+    return { id };
+  }
+}
+
+module.exports = ActividadService;
+</file>
+
+<file path="backend/api/services/horarioActividadService.js">
+const boom = require('@hapi/boom');
+
+const { models } = require('../libs/sequelize');
+
+class HorarioActividadService {
+  constructor() {}
+
+  async create(data) {
+    const newHorario = await models.HorarioActividad.create(data);
+    return newHorario;
+  }
+
+  async find() {
+    const horarios = await models.HorarioActividad.findAll({
+      include: ['actividad'] // Hace match con el alias definido en el modelo
+    });
+    return horarios;
+  }
+
+  async findOne(id) {
+    const horario = await models.HorarioActividad.findByPk(id, {
+      include: ['actividad']
+    });
+    if (!horario) {
+      throw boom.notFound('Horario de actividad no encontrado');
+    }
+    return horario;
+  }
+
+  async update(id, changes) {
+    const horario = await this.findOne(id);
+    const rta = await horario.update(changes);
+    return rta;
+  }
+
+  async delete(id) {
+    const horario = await this.findOne(id);
+    await horario.destroy();
+    return { id };
+  }
+}
+
+module.exports = HorarioActividadService;
+</file>
+
+<file path="backend/api/services/inscripcionService.js">
+const boom = require('@hapi/boom');
+
+const { models } = require('../libs/sequelize');
+
+class InscripcionService {
+  constructor() {}
+
+  async create(data) {
+    const newInscripcion = await models.Inscripcion.create(data);
+    return newInscripcion;
+  }
+
+  async find() {
+    const inscripciones = await models.Inscripcion.findAll({
+      include: ['horario', 'participantes'] // Aliases definidos en el modelo
+    });
+    return inscripciones;
+  }
+
+  async findOne(id) {
+    const inscripcion = await models.Inscripcion.findByPk(id, {
+      include: ['horario', 'participantes']
+    });
+    if (!inscripcion) {
+      throw boom.notFound('Inscripción no encontrada');
+    }
+    return inscripcion;
+  }
+
+  async update(id, changes) {
+    const inscripcion = await this.findOne(id);
+    const rta = await inscripcion.update(changes);
+    return rta;
+  }
+
+  async delete(id) {
+    const inscripcion = await this.findOne(id);
+    await inscripcion.destroy();
+    return { id };
+  }
+}
+
+module.exports = InscripcionService;
+</file>
+
+<file path="backend/api/services/participanteService.js">
+const boom = require('@hapi/boom');
+
+const { models } = require('../libs/sequelize');
+
+class ParticipanteService {
+  constructor() {}
+
+  async create(data) {
+    const newParticipante = await models.Participante.create(data);
+    return newParticipante;
+  }
+
+  async find() {
+    const participantes = await models.Participante.findAll({
+      include: ['inscripcion']
+    });
+    return participantes;
+  }
+
+  async findOne(dni, id_inscripcion) {
+    const participante = await models.Participante.findOne({
+      where: { dni, id_inscripcion },
+      include: ['inscripcion']
+    });
+    if (!participante) {
+      throw boom.notFound('Participante no encontrado');
+    }
+    return participante;
+  }
+
+  async update(dni, id_inscripcion, changes) {
+    const participante = await this.findOne(dni, id_inscripcion);
+    const rta = await participante.update(changes);
+    return rta;
+  }
+
+  async delete(dni, id_inscripcion) {
+    const participante = await this.findOne(dni, id_inscripcion);
+    await participante.destroy();
+    return { dni, id_inscripcion };
+  }
+}
+
+module.exports = ParticipanteService;
+</file>
+
+<file path="backend/package.json">
+{
+  "name": "ecopark-backend",
+  "version": "1.0.0",
+  "description": "EcoPark US N3",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon api/index.js",
+    "start": "node api/index.js",
+    "lint": "eslint ."
+  },
+  "author": "isw-grupo3",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^9.24.0",
+    "eslint-config-prettier": "^10.1.2",
+    "eslint-plugin-prettier": "^5.2.6",
+    "nodemon": "^3.1.9",
+    "prettier": "^3.5.3"
+  },
+  "dependencies": {
+    "@hapi/boom": "^9.1.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "joi": "^17.13.3",
+    "pg": "^8.14.1",
+    "pg-hstore": "^2.3.4",
+    "postgresql": "^0.0.1",
+    "sequelize": "^6.37.7",
+    "sequelize-cli": "^6.6.2"
+  }
+}
+</file>
+
+<file path="frontend/.gitignore">
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+</file>
+
+<file path="frontend/eslint.config.js">
+import js from '@eslint/js'
+import globals from 'globals'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+import tseslint from 'typescript-eslint'
+
+export default tseslint.config(
+  { ignores: ['dist'] },
+  {
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    files: ['**/*.{ts,tsx}'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.browser,
+    },
+    plugins: {
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+    },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
+      ],
+    },
+  },
+)
+</file>
+
+<file path="frontend/index.html">
+<!doctype html>
+<html lang="en">
+  <head>
+    <link href="https://fonts.googleapis.com/css2?family=McLaren&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React + TS</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+</file>
+
+<file path="frontend/package.json">
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.5.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.21.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^15.15.0",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.24.1",
+    "vite": "^6.2.0"
+  }
+}
+</file>
+
+<file path="frontend/public/vite.svg">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--logos" width="31.88" height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 257"><defs><linearGradient id="IconifyId1813088fe1fbc01fb466" x1="-.828%" x2="57.636%" y1="7.652%" y2="78.411%"><stop offset="0%" stop-color="#41D1FF"></stop><stop offset="100%" stop-color="#BD34FE"></stop></linearGradient><linearGradient id="IconifyId1813088fe1fbc01fb467" x1="43.376%" x2="50.316%" y1="2.242%" y2="89.03%"><stop offset="0%" stop-color="#FFEA83"></stop><stop offset="8.333%" stop-color="#FFDD35"></stop><stop offset="100%" stop-color="#FFA800"></stop></linearGradient></defs><path fill="url(#IconifyId1813088fe1fbc01fb466)" d="M255.153 37.938L134.897 252.976c-2.483 4.44-8.862 4.466-11.382.048L.875 37.958c-2.746-4.814 1.371-10.646 6.827-9.67l120.385 21.517a6.537 6.537 0 0 0 2.322-.004l117.867-21.483c5.438-.991 9.574 4.796 6.877 9.62Z"></path><path fill="url(#IconifyId1813088fe1fbc01fb467)" d="M185.432.063L96.44 17.501a3.268 3.268 0 0 0-2.634 3.014l-5.474 92.456a3.268 3.268 0 0 0 3.997 3.378l24.777-5.718c2.318-.535 4.413 1.507 3.936 3.838l-7.361 36.047c-.495 2.426 1.782 4.5 4.151 3.78l15.304-4.649c2.372-.72 4.652 1.36 4.15 3.788l-11.698 56.621c-.732 3.542 3.979 5.473 5.943 2.437l1.313-2.028l72.516-144.72c1.215-2.423-.88-5.186-3.54-4.672l-25.505 4.922c-2.396.462-4.435-1.77-3.759-4.114l16.646-57.705c.677-2.35-1.37-4.583-3.769-4.113Z"></path></svg>
+</file>
+
+<file path="frontend/README.md">
+# React + TypeScript + Vite
+
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+
+Currently, two official plugins are available:
+
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+
+```js
+export default tseslint.config({
+  extends: [
+    // Remove ...tseslint.configs.recommended and replace with this
+    ...tseslint.configs.recommendedTypeChecked,
+    // Alternatively, use this for stricter rules
+    ...tseslint.configs.strictTypeChecked,
+    // Optionally, add this for stylistic rules
+    ...tseslint.configs.stylisticTypeChecked,
+  ],
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
+```
+
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
+
+export default tseslint.config({
+  plugins: {
+    // Add the react-x and react-dom plugins
+    'react-x': reactX,
+    'react-dom': reactDom,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended typescript rules
+    ...reactX.configs['recommended-typescript'].rules,
+    ...reactDom.configs.recommended.rules,
+  },
+})
+```
+</file>
+
+<file path="frontend/src/App.css">
+/* Tipografía */
+@import url('https://fonts.googleapis.com/css2?family=McLaren&display=swap');
+
+:root {
+  --green-primary: #12BA12;
+  --green-text: #32A430;
+  font-family: 'McLaren', sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  font-family: 'McLaren', sans-serif;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Centrado de contenido general */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Estilo general para botones */
+button {
+  font-family: 'McLaren', sans-serif;
+  cursor: pointer;
+  border: none;
+  border-radius: 12px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+/* Logo animado (opcional para test) */
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+/* Extras opcionales */
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+</file>
+
+<file path="frontend/src/App.tsx">
+import { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Inicio from './pages/Inicio';
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Inicio />} />
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
+</file>
+
+<file path="frontend/src/assets/react.svg">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--logos" width="35.93" height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 228"><path fill="#00D8FF" d="M210.483 73.824a171.49 171.49 0 0 0-8.24-2.597c.465-1.9.893-3.777 1.273-5.621c6.238-30.281 2.16-54.676-11.769-62.708c-13.355-7.7-35.196.329-57.254 19.526a171.23 171.23 0 0 0-6.375 5.848a155.866 155.866 0 0 0-4.241-3.917C100.759 3.829 77.587-4.822 63.673 3.233C50.33 10.957 46.379 33.89 51.995 62.588a170.974 170.974 0 0 0 1.892 8.48c-3.28.932-6.445 1.924-9.474 2.98C17.309 83.498 0 98.307 0 113.668c0 15.865 18.582 31.778 46.812 41.427a145.52 145.52 0 0 0 6.921 2.165a167.467 167.467 0 0 0-2.01 9.138c-5.354 28.2-1.173 50.591 12.134 58.266c13.744 7.926 36.812-.22 59.273-19.855a145.567 145.567 0 0 0 5.342-4.923a168.064 168.064 0 0 0 6.92 6.314c21.758 18.722 43.246 26.282 56.54 18.586c13.731-7.949 18.194-32.003 12.4-61.268a145.016 145.016 0 0 0-1.535-6.842c1.62-.48 3.21-.974 4.76-1.488c29.348-9.723 48.443-25.443 48.443-41.52c0-15.417-17.868-30.326-45.517-39.844Zm-6.365 70.984c-1.4.463-2.836.91-4.3 1.345c-3.24-10.257-7.612-21.163-12.963-32.432c5.106-11 9.31-21.767 12.459-31.957c2.619.758 5.16 1.557 7.61 2.4c23.69 8.156 38.14 20.213 38.14 29.504c0 9.896-15.606 22.743-40.946 31.14Zm-10.514 20.834c2.562 12.94 2.927 24.64 1.23 33.787c-1.524 8.219-4.59 13.698-8.382 15.893c-8.067 4.67-25.32-1.4-43.927-17.412a156.726 156.726 0 0 1-6.437-5.87c7.214-7.889 14.423-17.06 21.459-27.246c12.376-1.098 24.068-2.894 34.671-5.345a134.17 134.17 0 0 1 1.386 6.193ZM87.276 214.515c-7.882 2.783-14.16 2.863-17.955.675c-8.075-4.657-11.432-22.636-6.853-46.752a156.923 156.923 0 0 1 1.869-8.499c10.486 2.32 22.093 3.988 34.498 4.994c7.084 9.967 14.501 19.128 21.976 27.15a134.668 134.668 0 0 1-4.877 4.492c-9.933 8.682-19.886 14.842-28.658 17.94ZM50.35 144.747c-12.483-4.267-22.792-9.812-29.858-15.863c-6.35-5.437-9.555-10.836-9.555-15.216c0-9.322 13.897-21.212 37.076-29.293c2.813-.98 5.757-1.905 8.812-2.773c3.204 10.42 7.406 21.315 12.477 32.332c-5.137 11.18-9.399 22.249-12.634 32.792a134.718 134.718 0 0 1-6.318-1.979Zm12.378-84.26c-4.811-24.587-1.616-43.134 6.425-47.789c8.564-4.958 27.502 2.111 47.463 19.835a144.318 144.318 0 0 1 3.841 3.545c-7.438 7.987-14.787 17.08-21.808 26.988c-12.04 1.116-23.565 2.908-34.161 5.309a160.342 160.342 0 0 1-1.76-7.887Zm110.427 27.268a347.8 347.8 0 0 0-7.785-12.803c8.168 1.033 15.994 2.404 23.343 4.08c-2.206 7.072-4.956 14.465-8.193 22.045a381.151 381.151 0 0 0-7.365-13.322Zm-45.032-43.861c5.044 5.465 10.096 11.566 15.065 18.186a322.04 322.04 0 0 0-30.257-.006c4.974-6.559 10.069-12.652 15.192-18.18ZM82.802 87.83a323.167 323.167 0 0 0-7.227 13.238c-3.184-7.553-5.909-14.98-8.134-22.152c7.304-1.634 15.093-2.97 23.209-3.984a321.524 321.524 0 0 0-7.848 12.897Zm8.081 65.352c-8.385-.936-16.291-2.203-23.593-3.793c2.26-7.3 5.045-14.885 8.298-22.6a321.187 321.187 0 0 0 7.257 13.246c2.594 4.48 5.28 8.868 8.038 13.147Zm37.542 31.03c-5.184-5.592-10.354-11.779-15.403-18.433c4.902.192 9.899.29 14.978.29c5.218 0 10.376-.117 15.453-.343c-4.985 6.774-10.018 12.97-15.028 18.486Zm52.198-57.817c3.422 7.8 6.306 15.345 8.596 22.52c-7.422 1.694-15.436 3.058-23.88 4.071a382.417 382.417 0 0 0 7.859-13.026a347.403 347.403 0 0 0 7.425-13.565Zm-16.898 8.101a358.557 358.557 0 0 1-12.281 19.815a329.4 329.4 0 0 1-23.444.823c-7.967 0-15.716-.248-23.178-.732a310.202 310.202 0 0 1-12.513-19.846h.001a307.41 307.41 0 0 1-10.923-20.627a310.278 310.278 0 0 1 10.89-20.637l-.001.001a307.318 307.318 0 0 1 12.413-19.761c7.613-.576 15.42-.876 23.31-.876H128c7.926 0 15.743.303 23.354.883a329.357 329.357 0 0 1 12.335 19.695a358.489 358.489 0 0 1 11.036 20.54a329.472 329.472 0 0 1-11 20.722Zm22.56-122.124c8.572 4.944 11.906 24.881 6.52 51.026c-.344 1.668-.73 3.367-1.15 5.09c-10.622-2.452-22.155-4.275-34.23-5.408c-7.034-10.017-14.323-19.124-21.64-27.008a160.789 160.789 0 0 1 5.888-5.4c18.9-16.447 36.564-22.941 44.612-18.3ZM128 90.808c12.625 0 22.86 10.235 22.86 22.86s-10.235 22.86-22.86 22.86s-22.86-10.235-22.86-22.86s10.235-22.86 22.86-22.86Z"></path></svg>
+</file>
+
+<file path="frontend/src/index.css">
+:root {
+  font-family: 'McLaren', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+}
+
+body {
+  font-family: 'McLaren', sans-serif;
+  overflow-x: hidden
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+</file>
+
+<file path="frontend/src/main.tsx">
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.tsx'
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+</file>
+
+<file path="frontend/src/pages/Inicio.tsx">
+import logo from '../assets/logo.png';
+
+const Inicio = () => {
+  return (
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      backgroundColor: 'white',
+    }}>
+      {/* Header */}
+      <header style={{
+        width: '100%',
+        padding: '12px 24px',
+        backgroundColor: 'white',
+        boxShadow: '0 4px 4px rgba(0, 0, 0, 0.1)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <img src={logo} alt="Logo" style={{ height: 32 }} />
+          <span style={{
+            fontSize: 24,
+            fontFamily: 'McLaren',
+            color: '#32A430'
+          }}>
+            EcoHarmonyPark
+          </span>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main style={{
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 24,
+        textAlign: 'center',
+      }}>
+        {/* Logo grande */}
+        <img src={logo} alt="Logo grande" style={{ width: 'clamp(120px, 20vw, 300px)', height: 'auto' }} />
+
+        {/* Título */}
+        <h1 style={{
+          fontSize: 'clamp(24px, 5vw, 40px)',
+          fontFamily: 'McLaren',
+          margin: 0,
+        }}>
+          ¡Bienvenido a EcoHarmonyPark!
+        </h1>
+
+        {/* Subtítulo */}
+        <p style={{
+          fontSize: 'clamp(16px, 2vw, 20px)',
+          fontFamily: 'McLaren',
+          margin: '16px 0'
+        }}>
+          Haga clic en el siguiente botón y disfrute de nuestras actividades
+        </p>
+
+        {/* Botón */}
+        <button style={{
+          padding: '12px 24px',
+          fontSize: 18,
+          fontFamily: 'McLaren',
+          backgroundColor: '#12BA12',
+          color: 'white',
+          border: 'none',
+          borderRadius: 12,
+          cursor: 'pointer'
+        }}>
+          Inscribirse a actividad
+        </button>
+      </main>
+    </div>
+  );
+};
+
+export default Inicio;
+</file>
+
+<file path="frontend/src/vite-env.d.ts">
+/// <reference types="vite/client" />
+</file>
+
+<file path="frontend/tsconfig.app.json">
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  "include": ["src"]
+}
+</file>
+
+<file path="frontend/tsconfig.json">
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
+}
+</file>
+
+<file path="frontend/tsconfig.node.json">
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  "include": ["vite.config.ts"]
+}
+</file>
+
+<file path="frontend/vite.config.ts">
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+})
+</file>
+
+</files>
