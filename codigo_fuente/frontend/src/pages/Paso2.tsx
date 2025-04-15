@@ -18,10 +18,8 @@ type FormData = {
 const Paso2 = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  // Se espera que el Paso 1 envíe en el state la cantidad de participantes
   const cantidad: number = location.state?.cantidad || 1;
 
-  // Inicializamos el formulario con 'cantidad' de participantes vacíos
   const { register, control, handleSubmit, formState: { errors } } = useForm<FormData>({
     defaultValues: {
       participantes: Array.from({ length: cantidad }, () => ({
@@ -38,7 +36,6 @@ const Paso2 = () => {
     name: 'participantes',
   });
 
-  // Si la cantidad recibida varía, se sincroniza el arreglo de participantes
   useEffect(() => {
     const current = fields.length;
     if (cantidad > current) {
@@ -57,13 +54,11 @@ const Paso2 = () => {
     navigate('/detalle', { state: { participantes: data.participantes } });
   };
 
-  // Función para manejar clics en el Stepper
   const handleStepClick = (step: number) => {
-    if (step === 1) navigate('/');       // Volver al Paso 1
-    if (step === 3) navigate('/detalle');  // Ir al Detalle (Paso 3)
+    if (step === 1) navigate('/');
+    if (step === 3) navigate('/detalle');
   };
 
-  // Estilo común para los inputs y select (ancho consistente)
   const commonInputStyle = {
     width: '100%',
     padding: 8,
@@ -129,7 +124,6 @@ const Paso2 = () => {
             Complete los siguientes datos para avanzar en su inscripción
           </p>
 
-          {/* Renderizado de cada participante */}
           {fields.map((field, index) => (
             <div
               key={field.id}
@@ -150,7 +144,6 @@ const Paso2 = () => {
                 Datos participante {index + 1}:
               </h3>
 
-              {/* Contenedor horizontal para los campos */}
               <div
                 style={{
                   display: 'flex',
@@ -160,14 +153,7 @@ const Paso2 = () => {
                   flexWrap: 'wrap',
                 }}
               >
-                {/* Campo: Nombre y apellido */}
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    flex: 1,
-                  }}
-                >
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                   <label style={{ marginBottom: 4 }}>Nombre y apellido</label>
                   <input
                     type="text"
@@ -184,14 +170,7 @@ const Paso2 = () => {
                   )}
                 </div>
 
-                {/* Campo: DNI */}
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    flex: 1,
-                  }}
-                >
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                   <label style={{ marginBottom: 4 }}>DNI</label>
                   <input
                     type="text"
@@ -199,12 +178,12 @@ const Paso2 = () => {
                     {...register(`participantes.${index}.dni`, {
                       required: 'Campo obligatorio',
                       pattern: {
-                      value: /^[0-9]+$/,
-                      message: 'Solo se permiten números',
-                    },
+                        value: /^[0-9]+$/,
+                        message: 'Solo se permiten números',
+                      },
                       minLength: {
-                      value: 8,
-                      message: 'El DNI debe tener al menos 8 dígitos',
+                        value: 8,
+                        message: 'El DNI debe tener al menos 8 dígitos',
                       },
                     })}
                     style={commonInputStyle}
@@ -216,17 +195,8 @@ const Paso2 = () => {
                   )}
                 </div>
 
-                {/* Campo: Fecha de nacimiento */}
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    flex: 1,
-                  }}
-                >
-                  <label style={{ marginBottom: 4 }}>
-                    Fecha de nacimiento
-                  </label>
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  <label style={{ marginBottom: 4 }}>Fecha de nacimiento</label>
                   <input
                     type="date"
                     {...register(`participantes.${index}.fechaNacimiento`, {
@@ -234,14 +204,12 @@ const Paso2 = () => {
                       validate: (value) => {
                         const fechaIngresada = new Date(value);
                         const hoy = new Date();
-                        hoy.setHours(0, 0, 0, 0); // Ignora la hora para comparar solo la fecha
-                  
+                        hoy.setHours(0, 0, 0, 0);
                         return fechaIngresada <= hoy || 'La fecha no puede ser futura';
                       },
                     })}
                     style={commonInputStyle}
                   />
-                  
                   {errors.participantes?.[index]?.fechaNacimiento && (
                     <p style={{ color: 'red', marginTop: 4 }}>
                       {errors.participantes[index]?.fechaNacimiento?.message}
@@ -249,15 +217,8 @@ const Paso2 = () => {
                   )}
                 </div>
 
-                {/* Campo: Talle de remera */}
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    flex: 1,
-                  }}
-                >
-                  <label style={{ marginBottom: 4 }}>Talle de remera</label>
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  <label style={{ marginBottom: 4 }}>Talle de vestimenta</label>
                   <select
                     {...register(`participantes.${index}.talle`, {
                       required: 'Campo obligatorio',
@@ -281,7 +242,24 @@ const Paso2 = () => {
             </div>
           ))}
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          {/* Botones Volver y Siguiente */}
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <button
+              type="button"
+              onClick={() => navigate('/paso1')}
+              style={{
+                padding: '8px 16px',
+                backgroundColor: '#ccc',
+                color: '#333',
+                border: 'none',
+                borderRadius: 8,
+                cursor: 'pointer',
+                fontFamily: 'McLaren',
+              }}
+            >
+              Volver
+            </button>
+
             <button
               type="submit"
               style={{
@@ -294,7 +272,7 @@ const Paso2 = () => {
                 fontFamily: 'McLaren',
               }}
             >
-              Continuar
+              Siguiente
             </button>
           </div>
         </form>
