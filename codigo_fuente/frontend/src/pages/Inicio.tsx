@@ -1,6 +1,20 @@
 import logo from '../assets/logo.png';
+import Stepper from '../components/Stepper';
+import Navbar from '../components/Navbar';
+import { useNavigate } from 'react-router-dom'; // Importa useNavigate
+import { useState } from 'react'; // Importa useState si no lo tienes
 
 const Inicio = () => {
+  const navigate = useNavigate();
+  const [currentStep, setCurrentStep] = useState(1); // Estado para el paso actual
+
+  const handleStepClick = (step: number) => {
+    setCurrentStep(step);
+    if (step === 3) {
+      navigate('/detalle');
+    }
+  };
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -8,27 +22,21 @@ const Inicio = () => {
       flexDirection: 'column',
       backgroundColor: 'white',
     }}>
-      {/* Header */}
-      <header style={{
+      {/* Navbar */}
+      <Navbar />
+
+      {/* Stepper */}
+      <div style={{
         width: '100%',
-        padding: '12px 24px',
-        backgroundColor: 'white',
-        boxShadow: '0 4px 4px rgba(0, 0, 0, 0.1)',
         display: 'flex',
-        alignItems: 'center',
         justifyContent: 'center',
+        alignItems: 'center',
+        padding: '24px 0',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <img src={logo} alt="Logo" style={{ height: 32 }} />
-          <span style={{
-            fontSize: 24,
-            fontFamily: 'McLaren',
-            color: '#32A430'
-          }}>
-            EcoHarmonyPark
-          </span>
+        <div style={{ width: 'fit-content', justifyContent: 'center' }}>
+          <Stepper currentStep={currentStep} onStepClick={handleStepClick} /> {/* Pasa currentStep y onStepClick */}
         </div>
-      </header>
+      </div>
 
       {/* Main Content */}
       <main style={{
@@ -40,40 +48,47 @@ const Inicio = () => {
         padding: 24,
         textAlign: 'center',
       }}>
-        {/* Logo grande */}
-        <img src={logo} alt="Logo grande" style={{ width: 'clamp(120px, 20vw, 300px)', height: 'auto' }} />
+        {/* Contenido principal de la página de inicio (pasos 1 y 2) */}
+        {currentStep < 3 && (
+          <>
+            {/* Logo grande */}
+            <img src={logo} alt="Logo grande" style={{ width: 'clamp(120px, 20vw, 300px)', height: 'auto' }} />
 
-        {/* Título */}
-        <h1 style={{
-          fontSize: 'clamp(24px, 5vw, 40px)',
-          fontFamily: 'McLaren',
-          margin: 0,
-        }}>
-          ¡Bienvenido a EcoHarmonyPark!
-        </h1>
+            {/* Título */}
+            <h1 style={{
+              fontSize: 'clamp(24px, 5vw, 40px)',
+              fontFamily: 'McLaren',
+              margin: 0,
+              color: '#32A430'
+            }}>
+              ¡Bienvenido a EcoHarmonyPark!
+            </h1>
 
-        {/* Subtítulo */}
-        <p style={{
-          fontSize: 'clamp(16px, 2vw, 20px)',
-          fontFamily: 'McLaren',
-          margin: '16px 0'
-        }}>
-          Haga clic en el siguiente botón y disfrute de nuestras actividades
-        </p>
+            {/* Subtítulo */}
+            <p style={{
+              fontSize: 'clamp(16px, 2vw, 20px)',
+              fontFamily: 'McLaren',
+              margin: '16px 0',
+              color: '#32A430'
+            }}>
+              Haga clic en el siguiente botón y disfrute de nuestras actividades
+            </p>
 
-        {/* Botón */}
-        <button style={{
-          padding: '12px 24px',
-          fontSize: 18,
-          fontFamily: 'McLaren',
-          backgroundColor: '#12BA12',
-          color: 'white',
-          border: 'none',
-          borderRadius: 12,
-          cursor: 'pointer'
-        }}>
-          Inscribirse a actividad
-        </button>
+            {/* Botón */}
+            <button style={{
+              padding: '12px 24px',
+              fontSize: 18,
+              fontFamily: 'McLaren',
+              backgroundColor: '#12BA12',
+              color: 'white',
+              border: 'none',
+              borderRadius: 12,
+              cursor: 'pointer'
+            }}>
+              Inscribirse a actividad
+            </button>
+          </>
+        )}
       </main>
     </div>
   );
