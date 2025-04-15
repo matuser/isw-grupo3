@@ -10,6 +10,9 @@ const Inicio = () => {
 
   const handleStepClick = (step: number) => {
     setCurrentStep(step);
+    if (step === 2) {
+      navigate('/paso2');
+    }
     if (step === 3) {
       navigate('/detalle');
     }

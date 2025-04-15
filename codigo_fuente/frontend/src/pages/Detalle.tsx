@@ -1,9 +1,17 @@
-import React from 'react';
+
 import Stepper from '../components/Stepper';
 import Navbar from '../components/Navbar';
 import { FiList, FiUser } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 
 const Detalle = () => {
+  const navigate = useNavigate();
+
+  const handleStepClick = (step: number) => {
+    if (step === 1 ) navigate('/');
+    if (step === 2 ) navigate('/paso2');
+  };
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -24,7 +32,7 @@ const Detalle = () => {
         padding: '24px 0',
       }}>
         <div style={{ width: 'fit-content', justifyContent: 'center' }}>
-          <Stepper currentStep={3} />
+          <Stepper currentStep={3} onStepClick={handleStepClick}/>
         </div>
       </div>
 
