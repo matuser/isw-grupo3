@@ -20,6 +20,36 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+// Listar fechas disponibles para una actividad y cantidad de personas
+router.get('/fechas-disponibles', async (req, res, next) => {
+  try {
+    const { id_actividad, cantidad_personas } = req.query;
+    const fechas = await service.findFechasDisponibles(
+      parseInt(id_actividad),
+      parseInt(cantidad_personas)
+    );
+    res.json(fechas);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Listar horarios de una actividad en una fecha específica
+router.get('/horarios-disponibles', async (req, res, next) => {
+  try {
+    const { id_actividad, fecha, cantidad_personas } = req.query;
+    const horarios = await service.findHorariosPorFecha(
+      parseInt(id_actividad),
+      fecha,
+      parseInt(cantidad_personas)
+    );
+    res.json(horarios);
+  } catch (error) {
+    next(error);
+  }
+});
+
+
 router.get('/:id',
   validatorHandler(getHorarioActividadSchema, 'params'),
   async (req, res, next) => {
