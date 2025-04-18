@@ -16,7 +16,7 @@ const Stepper: React.FC<StepperProps> = ({ currentStep: initialStep = 1, onStepC
   };
 
   const getStepBackgroundColor = (stepNumber: number): string => {
-    return stepNumber === currentStep ? '#009ADA' : '#32A430';
+    return stepNumber === currentStep ? '#31572C' : '#ccc';
   };
 
   const getTextColor = (stepNumber: number): string => {

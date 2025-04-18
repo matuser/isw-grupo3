@@ -73,8 +73,8 @@ const Navbar = () => {
         <img src={logo} alt="Logo" style={{ height: 32 }} />
         <span style={{
           fontSize: 24,
-          fontFamily: 'McLaren',
-          color: '#32A430'
+          fontFamily: 'Montserrat',
+          color: '#90A955'
         }}>
           EcoHarmonyPark
         </span>

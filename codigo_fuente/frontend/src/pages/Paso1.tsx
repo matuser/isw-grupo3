@@ -103,7 +103,7 @@ const Paso1 = () => {
                     flexDirection: 'column',
                     gap: 20,
                 }}>
-                    <h2 style={{ fontFamily: 'McLaren', fontWeight: 400, fontSize: 18 }}>
+                    <h2 style={{ fontFamily: 'Montserrat', fontWeight: 400, fontSize: 18, color: '#90A955' }}>
                         Completar los siguientes datos para avanzar en su inscripción
                     </h2>
 
@@ -195,9 +195,9 @@ const Paso1 = () => {
                             onClick={() => navigate('/')}
                             style={{
                                 padding: '6px 16px',
-                                backgroundColor: '#ccc',
+                                backgroundColor: '#90A955',
                                 color: 'black',
-                                fontFamily: 'McLaren',
+                                fontFamily: 'Montserrat',
                                 fontSize: 14,
                                 border: 'none',
                                 borderRadius: 8,
@@ -211,9 +211,9 @@ const Paso1 = () => {
                             onClick={handleNext}
                             style={{
                                 padding: '6px 16px',
-                                backgroundColor: '#12BA12',
+                                backgroundColor: '#ccc',
                                 color: 'white',
-                                fontFamily: 'McLaren',
+                                fontFamily: 'Montserrat',
                                 fontSize: 14,
                                 border: 'none',
                                 borderRadius: 8,
@@ -232,7 +232,7 @@ const Paso1 = () => {
 // Estilos
 
 const labelStyle = {
-    fontFamily: 'McLaren',
+    fontFamily: 'Montserrat',
     fontSize: 16,
     marginBottom: 8,
     textAlign: 'left' as const,
@@ -243,7 +243,7 @@ const selectStyle = {
     padding: 10,
     borderRadius: 8,
     border: '1px solid #ccc',
-    fontFamily: 'McLaren',
+    fontFamily: 'Montserrat',
     fontSize: 16,
     boxSizing: 'border-box' as const,
 };

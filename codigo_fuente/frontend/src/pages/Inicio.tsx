@@ -35,9 +35,9 @@ const Inicio = () => {
         {/* Título */}
         <h1 style={{
           fontSize: 'clamp(24px, 5vw, 40px)',
-          fontFamily: 'McLaren',
+          fontFamily: 'Montserrat',
           margin: 0,
-          color: '#32A430'
+          color: '#90A955'
         }}>
           ¡Bienvenido a EcoHarmonyPark!
         </h1>
@@ -45,9 +45,9 @@ const Inicio = () => {
         {/* Subtítulo */}
         <p style={{
           fontSize: 'clamp(16px, 2vw, 20px)',
-          fontFamily: 'McLaren',
+          fontFamily: 'Montserrat',
           margin: '16px 0',
-          color: '#32A430'
+          color: '#90A955'
         }}>
           Haga clic en el siguiente botón y disfrute de nuestras actividades
         </p>
@@ -58,8 +58,8 @@ const Inicio = () => {
           style={{
             padding: '12px 24px',
             fontSize: 18,
-            fontFamily: 'McLaren',
-            backgroundColor: '#12BA12',
+            fontFamily: 'Montserrat',
+            backgroundColor: '#90A955',
             color: 'white',
             border: 'none',
             borderRadius: 12,

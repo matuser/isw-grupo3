@@ -1,10 +1,10 @@
 /* Tipografía */
-@import url('https://fonts.googleapis.com/css2?family=McLaren&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 
 :root {
   --green-primary: #12BA12;
   --green-text: #32A430;
-  font-family: 'McLaren', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 body {
@@ -13,7 +13,7 @@ body {
   width: 100%;
   height: 100%;
   background-color: #fff;
-  font-family: 'McLaren', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 #root {
@@ -35,7 +35,7 @@ body {
 
 /* Estilo general para botones */
 button {
-  font-family: 'McLaren', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   cursor: pointer;
   border: none;
   border-radius: 12px;

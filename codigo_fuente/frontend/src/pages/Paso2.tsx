@@ -113,7 +113,7 @@ const Paso2 = () => {
         >
           <h2
             style={{
-              fontFamily: 'McLaren',
+              fontFamily: 'Montserrat',
               fontSize: 24,
               textAlign: 'center',
             }}
@@ -137,7 +137,7 @@ const Paso2 = () => {
             >
               <h3
                 style={{
-                  fontFamily: 'McLaren',
+                  fontFamily: 'Montserrat',
                   marginBottom: 12,
                 }}
               >
@@ -254,7 +254,7 @@ const Paso2 = () => {
                 border: 'none',
                 borderRadius: 8,
                 cursor: 'pointer',
-                fontFamily: 'McLaren',
+                fontFamily: 'Montserrat',
               }}
             >
               Volver
@@ -269,7 +269,7 @@ const Paso2 = () => {
                 border: 'none',
                 borderRadius: 8,
                 cursor: 'pointer',
-                fontFamily: 'McLaren',
+                fontFamily: 'Montserrat',
               }}
             >
               Siguiente
