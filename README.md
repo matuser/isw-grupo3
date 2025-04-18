@@ -26,7 +26,7 @@ Hemos propuesto la siguiente estructura de directorios en base a el desarrollo d
 | Tipo               | Regla de nombrado | Extensión          | Ubicación                          |
 |--------------------|---------|--------------------|------------------------------------|
 | Documentacion API       | API_<\<apiConsumida\>>.<\<ext\>>  | PDF                | /api_docs                      |
-| Prototipos       | PRO_<\<nombrePantalla\>>.<\<ext\>>    | JPG, PNG, PDF, SVG         | /diseño/prototipos           |
+| Prototipos       | PRO_FIGMA_<\<versión\>>.<\<ext\>>    | JPG, PNG, PDF, SVG         | /diseño/prototipos           |
 | Arquitectura      | ARQ_<\<nombreDiagrama\>>.<\<ext\>>   | PDF     | /diseño/arquitectura           |
 | Pruebas | PRUEBA_PLAN_<\<numeroEntregable\>>.<\<ext\>>    | XLSX     | /pruebas           |
 | Diagrama        | DIAG_<\<nombreDiagrama\>>.<\<ext\>>     | DRAWIO                | *                     |
