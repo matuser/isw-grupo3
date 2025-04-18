@@ -7,7 +7,7 @@ const ActividadSchema = {
     type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true,
-    autoIncrement: true,
+    autoIncrement: true
   },
   nombre: {
     type: DataTypes.STRING,
@@ -17,10 +17,9 @@ const ActividadSchema = {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  requiere_talla: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false
+  cupo_maximo: {
+    type: DataTypes.INTEGER,
+    allowNull: false
   }
 };
 
@@ -28,6 +27,11 @@ class Actividad extends Model {
   static associate(models) {
     this.hasMany(models.HorarioActividad, {
       as: 'horarios',
+      foreignKey: 'id_actividad'
+    });
+    
+    this.hasMany(models.Vestimenta, {
+      as: 'vestimentas',
       foreignKey: 'id_actividad'
     });
   }

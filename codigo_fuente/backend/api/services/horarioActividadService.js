@@ -1,5 +1,5 @@
 const boom = require('@hapi/boom');
-
+const { Op } = require('sequelize');
 const { models } = require('../libs/sequelize');
 
 class HorarioActividadService {
@@ -11,7 +11,16 @@ class HorarioActividadService {
   }
 
   async find() {
+    const today = new Date();
+    const maxDate = new Date();
+    maxDate.setDate(today.getDate() + 60);
+
     const horarios = await models.HorarioActividad.findAll({
+      where: {
+        fecha: {
+          [Op.between]: [today, maxDate]
+        }
+      },
       include: ['actividad'] // Hace match con el alias definido en el modelo
     });
     return horarios;

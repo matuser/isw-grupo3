@@ -1,5 +1,5 @@
 const boom = require('@hapi/boom');
-
+const { Op } = require('sequelize');
 const { models } = require('../libs/sequelize');
 
 class ActividadService {
@@ -11,16 +11,45 @@ class ActividadService {
   }
 
   async find() {
+    const today = new Date();
+    const maxDate = new Date();
+    maxDate.setDate(today.getDate() + 60);
+
     const actividades = await models.Actividad.findAll({
-      include: ['horarios'] // Esto hace match con el alias definido en el modelo
+      include: [
+        {
+          association: 'horarios',
+          where: {
+            fecha: {
+              [Op.between]: [today, maxDate]
+            }
+          },
+          required: false // si querés incluir actividades aunque no tengan horarios en ese rango
+        }
+      ]
     });
     return actividades;
   }
 
   async findOne(id) {
+    const today = new Date();
+    const maxDate = new Date();
+    maxDate.setDate(today.getDate() + 60);
+
     const actividad = await models.Actividad.findByPk(id, {
-      include: ['horarios']
+      include: [
+        {
+          association: 'horarios',
+          where: {
+            fecha: {
+              [Op.between]: [today, maxDate]
+            }
+          },
+          required: false
+        }
+      ]
     });
+
     if (!actividad) {
       throw boom.notFound('Actividad no encontrada');
     }

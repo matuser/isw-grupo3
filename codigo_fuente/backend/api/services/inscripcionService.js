@@ -1,5 +1,5 @@
 const boom = require('@hapi/boom');
-
+const { Op } = require('sequelize');
 const { models } = require('../libs/sequelize');
 
 class InscripcionService {
@@ -12,10 +12,11 @@ class InscripcionService {
 
   async find() {
     const inscripciones = await models.Inscripcion.findAll({
-      include: ['horario', 'participantes'] // Aliases definidos en el modelo
+      include: ['horario', 'participantes']
     });
     return inscripciones;
   }
+  
 
   async findOne(id) {
     const inscripcion = await models.Inscripcion.findByPk(id, {

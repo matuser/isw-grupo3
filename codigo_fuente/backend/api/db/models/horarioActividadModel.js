@@ -1,4 +1,3 @@
-// api/db/models/horarioActividad.model.js
 const { Model, DataTypes } = require('sequelize');
 
 const HORARIO_ACTIVIDAD_TABLE = 'horarios_actividades';
@@ -33,10 +32,6 @@ const HorarioActividadSchema = {
     allowNull: false
   },
   cupo_disponible: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
-  cupo_maximo: {
     type: DataTypes.INTEGER,
     allowNull: false
   }
