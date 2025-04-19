@@ -3,7 +3,7 @@ import Stepper from '../components/Stepper';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getActividades } from '../services/actividadService';
-import { getHorarios, getFechasDisponibles } from '../services/horarioService';
+import { getHorarios, getFechasDisponibles, getHorariosDisponiblesPorFecha } from '../services/horarioService';
 
 const Paso1 = () => {
     const navigate = useNavigate();
@@ -72,15 +72,26 @@ const Paso1 = () => {
     }, []);
 
     useEffect(() => {
-        if (actividad && fecha) {
-            const filtrados = horarios.filter(
-                (h) => h.id_actividad === Number(actividad) && h.fecha === fecha
-            );
-            setHorariosFiltrados(filtrados);
-        } else {
-            setHorariosFiltrados([]);
-        }
-    }, [actividad, fecha, horarios]);
+        const fetchHorarios = async () => {
+          if (actividad && fecha && cantidad) {
+            try {
+              const horariosDisponibles = await getHorariosDisponiblesPorFecha(
+                Number(actividad),
+                fecha,
+                Number(cantidad)
+              );
+              setHorariosFiltrados(horariosDisponibles);
+              console.log(horariosDisponibles)
+            } catch (error) {
+              console.error('Error al obtener horarios disponibles:', error);
+            }
+          }
+        };
+      
+        fetchHorarios();
+      }, [actividad, fecha, cantidad]);
+      
+    
 
     useEffect(() => {
         const fetchFechas = async () => {

@@ -43,13 +43,19 @@ export const getFechasDisponibles = async (id_actividad: number, cantidad_person
   return response.data; // Array de fechas disponibles (ej: ['2025-04-20', '2025-04-22'])
 };
 
-export const getHorariosDisponibles = async (
+export const getHorariosDisponiblesPorFecha = async (
   id_actividad: number,
   fecha: string,
   cantidad_personas: number
 ) => {
-  const response = await axios.get('/horarios-disponibles', {
-    params: { id_actividad, fecha, cantidad_personas },
+  const response = await api.get('horarios-actividades/horarios-disponibles', {
+    params: {
+      id_actividad,
+      fecha,
+      cantidad_personas,
+    },
   });
-  return response.data;
+  console.log(id_actividad, fecha, cantidad_personas);
+  console.log("hola colo", response.data)
+  return response.data; // Array de horarios disponibles para esa fecha
 };
