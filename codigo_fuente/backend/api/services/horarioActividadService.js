@@ -10,19 +10,66 @@ class HorarioActividadService {
     return newHorario;
   }
 
-  async find() {
+  async find(cantidadPersonas) {
     const today = new Date();
     const maxDate = new Date();
     maxDate.setDate(today.getDate() + 60);
+  
+    const where = {
+      fecha: {
+        [Op.between]: [today, maxDate]
+      }
+    };
+  
+    if (cantidadPersonas) {
+      where.cupo_disponible = {
+        [Op.gte]: cantidadPersonas
+      };
+    }
+  
+    const horarios = await models.HorarioActividad.findAll({
+      where,
+      include: ['actividad']
+    });
+  
+    return horarios;
+  }
 
+  async findFechasDisponibles(idActividad, cantidadPersonas) {
+    const today = new Date();
+    const maxDate = new Date();
+    maxDate.setDate(today.getDate() + 60);
+  
     const horarios = await models.HorarioActividad.findAll({
       where: {
+        id_actividad: idActividad,
+        cupo_disponible: {
+          [Op.gte]: cantidadPersonas
+        },
         fecha: {
           [Op.between]: [today, maxDate]
         }
       },
-      include: ['actividad'] // Hace match con el alias definido en el modelo
+      attributes: ['fecha'],
+      group: ['fecha'],
+      raw: true
     });
+  
+    return horarios.map(h => h.fecha); // solo devolvemos array de fechas
+  }
+  
+  async findHorariosPorFecha(idActividad, fecha, cantidadPersonas) {
+    const horarios = await models.HorarioActividad.findAll({
+      where: {
+        id_actividad: idActividad,
+        fecha: fecha,
+        cupo_disponible: {
+          [Op.gte]: cantidadPersonas
+        }
+      },
+      include: ['actividad']
+    });
+  
     return horarios;
   }
 

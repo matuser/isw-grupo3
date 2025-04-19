@@ -39,12 +39,13 @@ router.post('/',
     try {
       const body = req.body;
       const newInscripcion = await service.create(body);
-      res.status(201).json(newInscripcion);
+      res.status(201).json({ id: newInscripcion.id });
     } catch (error) {
       next(error);
     }
   }
 );
+
 
 router.patch('/:id',
   validatorHandler(getInscripcionSchema, 'params'),

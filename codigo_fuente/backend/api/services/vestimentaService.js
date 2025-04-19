@@ -16,6 +16,15 @@ class VestimentaService {
     return vestimentas;
   }
 
+  async findByActividadId(idActividad) {
+    const vestimentas = await models.Vestimenta.findAll({
+      where: {
+        id_actividad: idActividad
+      }
+    });
+    return vestimentas;
+  }
+  
   async findOne(id) {
     const vestimenta = await models.Vestimenta.findByPk(id, {
       include: ['actividad'] // ✅ Aquí también
