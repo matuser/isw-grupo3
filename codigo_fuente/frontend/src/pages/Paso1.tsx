@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getActividades } from '../services/actividadService';
 import { getHorarios, getFechasDisponibles, getHorariosDisponiblesPorFecha } from '../services/horarioService';
-
+import { parseISO, format } from 'date-fns';
 const Paso1 = () => {
     const navigate = useNavigate();
 
@@ -98,7 +98,8 @@ const Paso1 = () => {
             if (actividad && cantidad) {
                 try {
                     const fechas = await getFechasDisponibles(Number(actividad), Number(cantidad));
-                    setFechasDisponibles(fechas);
+                    const fechasOrdenadas = fechas.sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+                    setFechasDisponibles(fechasOrdenadas);
                 } catch (error) {
                     console.error('Error al obtener fechas disponibles:', error);
                 }
@@ -177,10 +178,11 @@ const Paso1 = () => {
                             >
                                 <option value="">Seleccione...</option>
                                 {fechasDisponibles.map((f) => (
-                                    <option key={f} value={f}>
-                                        {new Date(f).toLocaleDateString()}
-                                    </option>
-                                ))}
+  <option key={f} value={f}>
+    {format(parseISO(f), 'dd/MM/yyyy')}
+  </option>
+))}
+
                             </select>
                             {errors.fecha && <p style={errorStyle}>Campo obligatorio</p>}
                         </div>
