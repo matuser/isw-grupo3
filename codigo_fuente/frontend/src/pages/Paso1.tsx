@@ -1,24 +1,23 @@
 import Navbar from '../components/Navbar';
 import Stepper from '../components/Stepper';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
 import { getActividades } from '../services/actividadService';
-import { getHorarios } from '../services/horarioService';
+import { getHorarios, getFechasDisponibles } from '../services/horarioService';
 
 const Paso1 = () => {
     const navigate = useNavigate();
 
     const [actividad, setActividad] = useState<number | ''>('');
-    const [cantidad, setCantidad] = useState('');
+    const [cantidad, setCantidad] = useState<number | ''>('');
     const [fecha, setFecha] = useState('');
     const [hora, setHora] = useState('');
-    const [actividades, setActividades] = useState([]);
-    const [horarios, setHorarios] = useState([]);
-    const [horariosFiltrados, setHorariosFiltrados] = useState([]);
 
+    const [actividades, setActividades] = useState<any[]>([]);
+    const [horarios, setHorarios] = useState<any[]>([]);
+    const [horariosFiltrados, setHorariosFiltrados] = useState<any[]>([]);
+    const [fechasDisponibles, setFechasDisponibles] = useState<string[]>([]);
 
-    // Estado para errores de validación
     const [errors, setErrors] = useState({
         actividad: false,
         cantidad: false,
@@ -31,7 +30,6 @@ const Paso1 = () => {
     };
 
     const handleNext = () => {
-        // Verificación de campos obligatorios
         const newErrors = {
             actividad: !actividad,
             cantidad: !cantidad,
@@ -40,135 +38,98 @@ const Paso1 = () => {
         };
         setErrors(newErrors);
 
-        // Si no hay errores
-        if (!newErrors.actividad && !newErrors.cantidad && !newErrors.fecha && !newErrors.hora) {
-            navigate('/paso2', {
-                state: { cantidad }, // Pasar la cantidad al paso 2
-            });
+        if (!Object.values(newErrors).includes(true)) {
+            navigate('/paso2', { state: { cantidad } });
         }
     };
 
     const isFechaHoraEnabled = actividad && cantidad;
 
-    const today = new Date();
-    const maxDate = new Date(today);
-    maxDate.setDate(today.getDate() + 30);
-
-    const formattedToday = today.toISOString().split('T')[0];
-    const formattedMaxDate = maxDate.toISOString().split('T')[0];
-
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, field: string) => {
         const { value } = e.target;
-        if (field === 'actividad') setActividad(value);
-        if (field === 'cantidad') setCantidad(value);
+
+        if (field === 'actividad') setActividad(Number(value));
+        if (field === 'cantidad') setCantidad(Number(value));
         if (field === 'fecha') setFecha(value);
         if (field === 'hora') setHora(value);
 
-        // Limpiar el error del campo correspondiente
-        setErrors((prevErrors) => ({ ...prevErrors, [field]: false }));
+        setErrors((prev) => ({ ...prev, [field]: false }));
     };
 
-    // Se conecta a la API para obtener las actividades y horarios disponibles
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const actividadesData = await getActividades();
                 setActividades(actividadesData);
-                console.log(actividadesData);
+
                 const horariosData = await getHorarios();
                 setHorarios(horariosData);
             } catch (error) {
                 console.error('Error al obtener datos:', error);
             }
         };
-    
         fetchData();
     }, []);
 
     useEffect(() => {
-        console.log('Actividad:', actividad);
-        
         if (actividad && fecha) {
-            console.log('Actividad:', actividad);
-            console.log('Fecha:', fecha);
             const filtrados = horarios.filter(
-                (h) =>
-                    h.id_actividad === Number(actividad) &&
-                    h.fecha === fecha
+                (h) => h.id_actividad === Number(actividad) && h.fecha === fecha
             );
             setHorariosFiltrados(filtrados);
         } else {
             setHorariosFiltrados([]);
         }
-    }, [actividad, fecha, horarios]);    
+    }, [actividad, fecha, horarios]);
 
+    useEffect(() => {
+        const fetchFechas = async () => {
+            if (actividad && cantidad) {
+                try {
+                    const fechas = await getFechasDisponibles(Number(actividad), Number(cantidad));
+                    setFechasDisponibles(fechas);
+                } catch (error) {
+                    console.error('Error al obtener fechas disponibles:', error);
+                }
+            } else {
+                setFechasDisponibles([]);
+            }
+        };
+        fetchFechas();
+    }, [actividad, cantidad]);
 
     return (
-        <div style={{
-            minHeight: '100vh',
-            display: 'flex',
-            flexDirection: 'column',
-            backgroundColor: 'white',
-            alignItems: 'center',
-        }}>
+        <div style={containerStyle}>
             <Navbar />
 
-            <div style={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: '24px 0',
-            }}>
-                <div style={{ width: 'fit-content', justifyContent: 'center' }}>
+            <div style={stepperContainerStyle}>
+                <div style={{ width: 'fit-content' }}>
                     <Stepper currentStep={1} onStepClick={handleStepClick} />
                 </div>
             </div>
 
-            <main style={{
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                padding: 24,
-                textAlign: 'center',
-                width: '100%',
-            }}>
-                <div style={{
-                    width: 'clamp(300px, 80vw, 768px)',
-                    padding: 20,
-                    background: 'white',
-                    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
-                    borderRadius: 12,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 20,
-                }}>
-                    <h2 style={{ fontFamily: 'Montserrat', fontWeight: 400, fontSize: 18, color: '#90A955' }}>
+            <main style={mainStyle}>
+                <div style={cardStyle}>
+                    <h2 style={titleStyle}>
                         Completar los siguientes datos para avanzar en su inscripción
                     </h2>
 
-                    {/* Columna 1 */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 20 }}>
+                    {/* Actividad y Cantidad */}
+                    <div style={rowStyle}>
                         <div style={fieldContainerStyle}>
                             <label htmlFor="actividad" style={labelStyle}>Actividad</label>
                             <select
                                 id="actividad"
                                 value={actividad}
                                 onChange={(e) => handleInputChange(e, 'actividad')}
-                                style={{
-                                    ...selectStyle,
-                                    borderColor: errors.actividad ? 'red' : '#ccc',
-                                }}
+                                style={{ ...selectStyle, borderColor: errors.actividad ? 'red' : '#ccc' }}
                             >
                                 <option value="">Seleccione...</option>
                                 {actividades.map((act) => (
-                                    <option key={act.id} value={act.id}>
-                                        {act.nombre}
-                                    </option>
+                                    <option key={act.id} value={act.id}>{act.nombre}</option>
                                 ))}
                             </select>
-                            {errors.actividad && <p style={{ color: 'red', fontSize: 12 }}>Campo obligatorio</p>}
+                            {errors.actividad && <p style={errorStyle}>Campo obligatorio</p>}
                         </div>
 
                         <div style={fieldContainerStyle}>
@@ -177,39 +138,40 @@ const Paso1 = () => {
                                 id="cantidad"
                                 value={cantidad}
                                 onChange={(e) => handleInputChange(e, 'cantidad')}
-                                style={{
-                                    ...selectStyle,
-                                    borderColor: errors.cantidad ? 'red' : '#ccc',
-                                }}
+                                style={{ ...selectStyle, borderColor: errors.cantidad ? 'red' : '#ccc' }}
                             >
                                 <option value="">Seleccione...</option>
-                                {Array.from({ length: 10 }, (_, i) => i + 1).map(n => (
+                                {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
                                     <option key={n} value={n}>{n}</option>
                                 ))}
                             </select>
-                            {errors.cantidad && <p style={{ color: 'red', fontSize: 12 }}>Campo obligatorio</p>}
+                            {errors.cantidad && <p style={errorStyle}>Campo obligatorio</p>}
                         </div>
                     </div>
 
-                    {/* Columna 2 */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 20 }}>
+                    {/* Fecha y Hora */}
+                    <div style={rowStyle}>
                         <div style={fieldContainerStyle}>
                             <label htmlFor="fecha" style={labelStyle}>Fecha</label>
-                            <input
+                            <select
                                 id="fecha"
-                                type="date"
                                 value={fecha}
                                 onChange={(e) => handleInputChange(e, 'fecha')}
-                                min={formattedToday}
-                                max={formattedMaxDate}
                                 style={{
                                     ...selectStyle,
                                     opacity: isFechaHoraEnabled ? 1 : 0.5,
                                     borderColor: errors.fecha ? 'red' : '#ccc',
                                 }}
                                 disabled={!isFechaHoraEnabled}
-                            />
-                            {errors.fecha && <p style={{ color: 'red', fontSize: 12 }}>Campo obligatorio</p>}
+                            >
+                                <option value="">Seleccione...</option>
+                                {fechasDisponibles.map((f) => (
+                                    <option key={f} value={f}>
+                                        {new Date(f).toLocaleDateString()}
+                                    </option>
+                                ))}
+                            </select>
+                            {errors.fecha && <p style={errorStyle}>Campo obligatorio</p>}
                         </div>
 
                         <div style={fieldContainerStyle}>
@@ -232,42 +194,16 @@ const Paso1 = () => {
                                     </option>
                                 ))}
                             </select>
-                            {errors.hora && <p style={{ color: 'red', fontSize: 12 }}>Campo obligatorio</p>}
+                            {errors.hora && <p style={errorStyle}>Campo obligatorio</p>}
                         </div>
                     </div>
 
-
                     {/* Botones */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 30 }}>
-                        <button
-                            onClick={() => navigate('/')}
-                            style={{
-                                padding: '6px 16px',
-                                backgroundColor: '#90A955',
-                                color: 'black',
-                                fontFamily: 'Montserrat',
-                                fontSize: 14,
-                                border: 'none',
-                                borderRadius: 8,
-                                cursor: 'pointer',
-                            }}
-                        >
+                        <button onClick={() => navigate('/')} style={buttonBackStyle}>
                             Volver
                         </button>
-
-                        <button
-                            onClick={handleNext}
-                            style={{
-                                padding: '6px 16px',
-                                backgroundColor: '#ccc',
-                                color: 'white',
-                                fontFamily: 'Montserrat',
-                                fontSize: 14,
-                                border: 'none',
-                                borderRadius: 8,
-                                cursor: 'pointer',
-                            }}
-                        >
+                        <button onClick={handleNext} style={buttonNextStyle}>
                             Siguiente
                         </button>
                     </div>
@@ -278,6 +214,53 @@ const Paso1 = () => {
 };
 
 // Estilos
+
+const containerStyle = {
+    minHeight: '100vh',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    backgroundColor: 'white',
+    alignItems: 'center',
+};
+
+const stepperContainerStyle = {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    padding: '24px 0',
+};
+
+const mainStyle = {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'center',
+    padding: 24,
+    width: '100%',
+};
+
+const cardStyle = {
+    width: 'clamp(300px, 80vw, 768px)',
+    padding: 20,
+    background: 'white',
+    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+    borderRadius: 12,
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: 20,
+};
+
+const rowStyle = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    gap: 20,
+};
+
+const fieldContainerStyle = {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column' as const,
+};
 
 const labelStyle = {
     fontFamily: 'Montserrat',
@@ -296,10 +279,38 @@ const selectStyle = {
     boxSizing: 'border-box' as const,
 };
 
-const fieldContainerStyle = {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column' as const,
+const titleStyle = {
+    fontFamily: 'Montserrat',
+    fontWeight: 400,
+    fontSize: 18,
+    color: '#90A955',
+};
+
+const errorStyle = {
+    color: 'red',
+    fontSize: 12,
+};
+
+const buttonBackStyle = {
+    padding: '6px 16px',
+    backgroundColor: '#90A955',
+    color: 'black',
+    fontFamily: 'Montserrat',
+    fontSize: 14,
+    border: 'none',
+    borderRadius: 8,
+    cursor: 'pointer',
+};
+
+const buttonNextStyle = {
+    padding: '6px 16px',
+    backgroundColor: '#ccc',
+    color: 'white',
+    fontFamily: 'Montserrat',
+    fontSize: 14,
+    border: 'none',
+    borderRadius: 8,
+    cursor: 'pointer',
 };
 
 export default Paso1;
