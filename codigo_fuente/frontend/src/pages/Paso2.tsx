@@ -399,8 +399,14 @@ const Paso2 = () => {
                                             {...register(`participantes.${index}.dni`, {
                                                 required: 'El DNI es obligatorio',
                                                 pattern: { value: /^[0-9]+$/, message: 'Solo se permiten números' },
-                                                minLength: { value: 8, message: 'El DNI debe tener al menos 8 dígitos' }
-                                            })}
+                                                minLength: { value: 8, message: 'El DNI debe tener al menos 8 dígitos' },
+                                                validate: (value) => {
+                                                  const dnis = control._formValues.participantes?.map((p: Participante) => p.dni);
+                                                  const duplicados = dnis.filter((dni: string) => dni === value);
+                                                  return duplicados.length <= 1 || 'Este DNI ya fue ingresado para otro participante';
+                                                }
+                                              })}
+                                              
                                             style={{ ...commonInputStyle, borderColor: errors.participantes?.[index]?.dni ? 'red' : '#ccc' }} // <- ¡Añadimos !important
                                         />
                                         {errors.participantes?.[index]?.dni && <p style={errorStyle}>{errors.participantes[index].dni.message}</p>}

@@ -40,7 +40,7 @@ const Paso1 = () => {
   });
 
   const handleStepClick = (step: number) => {
-    if (step === 1) navigate('/');
+    if (step === 1) navigate('/paso1', { state: { desde: true } });
   };
 
   const handleNext = () => {
@@ -185,9 +185,49 @@ const Paso1 = () => {
                 style={quantityButtonStyle}
               >−</button>
               <div style={quantityInputContainerStyle}>
-                <FaUser style={{ marginRight: 8, color: '#aaa' }} />
-                <span style={quantityValueStyle}>{cantidad || 1}</span>
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={cantidad === 0 ? '' : cantidad.toString()}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  const value = e.target.value;
+
+                  if (/^\d{0,2}$/.test(value)) {
+                    if (value === '') {
+                      setCantidadLocal(0); // temporal mientras escribe
+                    } else {
+                      const parsed = Number(value);
+                      if (parsed >= 1 && parsed <= 10) {
+                        setCantidadLocal(parsed);
+                        setErrors((prev) => ({ ...prev, cantidad: false }));
+                      }
+                    }
+                  }
+                }}
+                onBlur={() => {
+                  if (cantidad < 1) {
+                    setCantidadLocal(1);
+                  }
+                }}
+                style={{
+                  ...quantityValueStyle,
+                  border: 'none',
+                  width: 50,
+                  textAlign: 'center',
+                  backgroundColor: 'transparent',
+                  fontSize: 16,
+                  fontFamily: 'Montserrat',
+                  outline: 'none',
+                  appearance: 'textfield',
+                  WebkitAppearance: 'textfield',
+                  MozAppearance: 'textfield',
+                }}
+              />
+
+                <FaUser style={{ marginLeft: 8, color: '#aaa' }} />
               </div>
+
               <button
                 type="button"
                 onClick={() => setCantidadLocal((prev) => Math.min(Number(prev) + 1, 10))}
