@@ -2,23 +2,31 @@ import Navbar from '../components/Navbar';
 import Stepper from '../components/Stepper';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import { useForm, useFieldArray } from 'react-hook-form';
 import { useData } from '../hooks/DataContext';
 import { getActividades } from '../services/actividadService';
-import {  getFechasDisponibles, getHorariosDisponiblesPorFecha } from '../services/horarioService';
+import { getFechasDisponibles, getHorariosDisponiblesPorFecha } from '../services/horarioService';
 import { parseISO, format } from 'date-fns';
 import { FaUser } from 'react-icons/fa';
-
+import { useLocation } from 'react-router-dom';
 
 
 const Paso1 = () => {
   const navigate = useNavigate();
-  const { setCantidad, setActividad, setFecha, setHora } = useData();
+  const {
+    cantidad: cantidadCtx,
+    actividad: actividadCtx,
+    fecha: fechaCtx,
+    hora: horaCtx,
+    setCantidad,
+    setActividad,
+    setFecha,
+    setHora,
+  } = useData();
 
-  const [actividad, setActividadLocal] = useState<number | ''>('');
-  const [cantidad, setCantidadLocal] = useState<number>(1);
-  const [fecha, setFechaLocal] = useState('');
-  const [hora, setHoraLocal] = useState('');
+  const [actividad, setActividadLocal] = useState<number | ''>(actividadCtx || '');
+  const [cantidad, setCantidadLocal] = useState<number>(cantidadCtx || 1);
+  const [fecha, setFechaLocal] = useState(fechaCtx || '');
+  const [hora, setHoraLocal] = useState(horaCtx || '');
 
   const [actividades, setActividades] = useState<any[]>([]);
   const [horariosFiltrados, setHorariosFiltrados] = useState<any[]>([]);
@@ -69,6 +77,14 @@ const Paso1 = () => {
     setErrors((prev) => ({ ...prev, [field]: false }));
   };
 
+  // Mantener sincronización si cambia el contexto
+  useEffect(() => {
+    setActividadLocal(actividadCtx || '');
+    setCantidadLocal(cantidadCtx || 1);
+    setFechaLocal(fechaCtx || '');
+    setHoraLocal(horaCtx || '');
+  }, [actividadCtx, cantidadCtx, fechaCtx, horaCtx]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -117,6 +133,17 @@ const Paso1 = () => {
   }, [actividad, cantidad]);
 
   const formularioValido = actividad && cantidad && fecha && hora && !Object.values(errors).includes(true);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (!location.state?.desde) {
+      setActividad('');
+      setCantidad(1);
+      setFecha('');
+      setHora('');
+    }
+  }, [location.state]);
 
   return (
     <div style={containerStyle}>

@@ -1,27 +1,28 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 interface StepperProps {
   currentStep?: number;
   onStepClick?: (step: number) => void;
 }
 
-const Stepper: React.FC<StepperProps> = ({ currentStep: initialStep = 1, onStepClick }) => {
-  const [currentStep, setCurrentStep] = useState<number>(initialStep);
+const Stepper: React.FC<StepperProps> = ({ currentStep = 1, onStepClick }) => {
+  const steps = [
+    { number: 1, title: 'Paso 1:', subtitle: 'Seleccionar actividad' },
+    { number: 2, title: 'Paso 2:', subtitle: 'Inscribir visitantes' },
+    { number: 3, title: 'Paso 3:', subtitle: 'Detalle de inscripción' },
+  ];
 
-  const handleStepClick = (stepNumber: number) => {
-    setCurrentStep(stepNumber);
-    if (onStepClick) {
-      onStepClick(stepNumber);
-    }
+  const getBackgroundColor = (step: number): string => {
+    if (step < currentStep) return '#31572C';     // verde
+    if (step === currentStep) return '#FFB703';   // amarillo
+    return '#F4F5F7';                             // gris claro
   };
 
-  const getStepBackgroundColor = (stepNumber: number): string => {
-    return stepNumber === currentStep ? '#31572C' : '#ccc';
+  const getTextColor = (step: number): string => {
+    return step < currentStep || step === currentStep ? '#fff' : '#000';
   };
 
-  const getTextColor = (stepNumber: number): string => {
-    return 'white';
-  };
+  const shape = 'polygon(0 0, 95% 0, 100% 50%, 95% 100%, 0 100%, 10px 50%)';
 
   return (
     <div style={{
@@ -29,127 +30,55 @@ const Stepper: React.FC<StepperProps> = ({ currentStep: initialStep = 1, onStepC
       justifyContent: 'center',
       alignItems: 'center',
       padding: '20px',
-      width: '100%',
-      overflow: 'hidden',
+      gap: '10px',
     }}>
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-      }}>
-        {/* Paso 1 */}
+      {steps.map((step) => (
         <div
-          onClick={() => handleStepClick(1)}
+          key={step.number}
+          onClick={() => onStepClick?.(step.number)}
           style={{
-            backgroundColor: getStepBackgroundColor(1),
-            color: getTextColor(1),
-            padding: '15px 30px',
-            borderTopLeftRadius: '8px',
-            borderBottomLeftRadius: '8px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            cursor: 'pointer',
+            width: 290,
+            height: 60,
             position: 'relative',
+            cursor: 'pointer',
           }}
         >
-          <div style={{ fontSize: '14px', fontWeight: '500', textAlign: 'center' }}>Paso 1:</div>
-          <div style={{ fontSize: '12px', textAlign: 'center' }}>Seleccionar actividad</div>
-          {currentStep < 2 && (
-            <div style={{
-              width: 0,
-              height: 0,
-              borderTop: '30px solid transparent',
-              borderBottom: '30px solid transparent',
-              borderLeft: `20px solid ${getStepBackgroundColor(1)}`,
-              position: 'absolute',
-              right: '-20px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              zIndex: 0,
-            }} />
-          )}
-        </div>
+          {/* Capa externa con borde */}
+          <div style={{
+            backgroundColor: '#D2D6DC',
+            clipPath: shape,
+            width: '100%',
+            height: '100%',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            zIndex: 0,
+          }} />
 
-        {/* Paso 2 */}
-        <div
-          onClick={() => handleStepClick(2)}
-          style={{
-            backgroundColor: getStepBackgroundColor(2),
-            color: getTextColor(2),
-            padding: '15px 30px',
+          {/* Capa interna con relleno, un poco más chica para mostrar borde */}
+          <div style={{
+            backgroundColor: getBackgroundColor(step.number),
+            clipPath: shape,
+            width: 'calc(100% - 2px)',
+            height: 'calc(100% - 2px)',
+            margin: '1px',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            zIndex: 1,
             display: 'flex',
             flexDirection: 'column',
+            justifyContent: 'center',
             alignItems: 'center',
-            cursor: 'pointer',
-            position: 'relative',
-          }}
-        >
-          {currentStep > 1 && (
-            <div style={{
-              width: 0,
-              height: 0,
-              borderTop: '30px solid transparent',
-              borderBottom: '30px solid transparent',
-              borderRight: `20px solid ${getStepBackgroundColor(2)}`,
-              position: 'absolute',
-              left: '-20px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              zIndex: 0,
-            }} />
-          )}
-          <div style={{ fontSize: '14px', fontWeight: '500', textAlign: 'center' }}>Paso 2:</div>
-          <div style={{ fontSize: '12px', textAlign: 'center' }}>Inscribir visitantes</div>
-          {currentStep < 3 && (
-            <div style={{
-              width: 0,
-              height: 0,
-              borderTop: '30px solid transparent',
-              borderBottom: '30px solid transparent',
-              borderLeft: `20px solid ${getStepBackgroundColor(2)}`,
-              position: 'absolute',
-              right: '-20px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              zIndex: 0,
-            }} />
-          )}
+            color: getTextColor(step.number),
+            fontWeight: 600,
+            fontSize: 14,
+          }}>
+            <div>{step.title}</div>
+            <div style={{ fontSize: 12, fontWeight: 400 }}>{step.subtitle}</div>
+          </div>
         </div>
-
-        {/* Paso 3 */}
-        <div
-          onClick={() => handleStepClick(3)}
-          style={{
-            backgroundColor: getStepBackgroundColor(3),
-            color: getTextColor(3),
-            padding: '15px 30px',
-            borderTopRightRadius: '8px',
-            borderBottomRightRadius: '8px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            cursor: 'pointer',
-            position: 'relative',
-          }}
-        >
-          {currentStep > 2 && (
-            <div style={{
-              width: 0,
-              height: 0,
-              borderTop: '30px solid transparent',
-              borderBottom: '30px solid transparent',
-              borderRight: `20px solid ${getStepBackgroundColor(3)}`,
-              position: 'absolute',
-              left: '-20px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              zIndex: 0,
-            }} />
-          )}
-          <div style={{ fontSize: '14px', fontWeight: '500', textAlign: 'center' }}>Paso 3:</div>
-          <div style={{ fontSize: '12px', textAlign: 'center' }}>Detalle de inscripción</div>
-        </div>
-      </div>
+      ))}
     </div>
   );
 };

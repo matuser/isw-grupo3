@@ -382,7 +382,10 @@ const Paso2 = () => {
                                             id={`participantes.${index}.nombre`}
                                             type="text"
                                             placeholder="Ingrese su nombre"
-                                            {...register(`participantes.${index}.nombre`, { required: 'El nombre es obligatorio' })}
+                                            {...register(`participantes.${index}.nombre`, { required: 'El nombre es obligatorio',
+                                                pattern: { value: /^[a-zA-ZÀ-ÿ\s]+$/, message: 'Solo se permiten letras' },
+                                                minLength: { value: 3, message: 'El nombre debe tener al menos 3 caracteres' }
+                                             })}
                                             style={{ ...commonInputStyle, borderColor: errors.participantes?.[index]?.nombre ? 'red' : '#ccc' }} // <- ¡Añadimos !important
                                         />
                                         {errors.participantes?.[index]?.nombre && <p style={errorStyle}>{errors.participantes[index].nombre.message}</p>}
@@ -412,7 +415,11 @@ const Paso2 = () => {
                                             type="date"
                                             {...register(`participantes.${index}.fechaNacimiento`, {
                                                 required: 'Campo obligatorio',
-                                                validate: (value) => new Date(value) <= new Date()
+                                                validate: (value) => {
+                                                    const fecha = new Date (value); 
+                                                    const edad = new Date().getFullYear() - fecha.getFullYear();
+                                                    return edad >= 5 || 'El participante debe ser tener al menos 5 años de edad';
+                                                }
                                             })}
                                             style={{ ...commonInputStyle,borderColor: errors.participantes?.[index]?.fechaNacimiento ? 'red' : '#ccc' }}
                                         />
@@ -423,7 +430,9 @@ const Paso2 = () => {
                             </div>
                         ))}
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
-                            <button onClick={() => navigate(-1)} type="button" style={buttonVolverStyle}>Volver</button>
+                        <button onClick={() => navigate('/paso1', { state: { desde: true } })} type="button" style={buttonVolverStyle}>
+                            Volver
+                            </button>
                             <button
                                 type="submit"
                                 style={!isValid ? buttonSiguienteDisabledStyle : buttonSiguienteStyle}
