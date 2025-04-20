@@ -1,4 +1,7 @@
 import React from 'react';
+import useMediaQuery from '@mui/material/useMediaQuery';
+
+
 
 interface StepperProps {
   currentStep?: number;
@@ -13,9 +16,9 @@ const Stepper: React.FC<StepperProps> = ({ currentStep = 1, onStepClick }) => {
   ];
 
   const getBackgroundColor = (step: number): string => {
-    if (step < currentStep) return '#31572C';     // verde
-    if (step === currentStep) return '#FFB703';   // amarillo
-    return '#F4F5F7';                             // gris claro
+    if (step < currentStep) return '#31572C';
+    if (step === currentStep) return '#FFB703';
+    return '#F4F5F7';
   };
 
   const getTextColor = (step: number): string => {
@@ -24,26 +27,42 @@ const Stepper: React.FC<StepperProps> = ({ currentStep = 1, onStepClick }) => {
 
   const shape = 'polygon(0 0, 95% 0, 100% 50%, 95% 100%, 0 100%, 10px 50%)';
 
+
+  
+
+  const isMobile = useMediaQuery('(max-width: 600px)');
+
+  // Media query en línea (opcional: podés mover a clase o styled-component)
+  const responsiveStepStyle = (): React.CSSProperties => ({
+    width: isMobile ? '95vw' : 240, // si pones 95vw en donde dice '100%' se ve mas larga la flecha
+    minWidth: 180,
+    height: isMobile ? 80 : 60,
+    position: 'relative',
+    cursor: 'pointer',
+  });
+  
+  
+
+  const containerStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row', // 👈 cambia según el ancho
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '20px',
+    gap: '10px',
+    flexWrap: 'wrap',
+  };
+  
+
+
   return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: '20px',
-      gap: '10px',
-    }}>
+    <div style={containerStyle}>
       {steps.map((step) => (
         <div
           key={step.number}
           onClick={() => onStepClick?.(step.number)}
-          style={{
-            width: 290,
-            height: 60,
-            position: 'relative',
-            cursor: 'pointer',
-          }}
+          style={responsiveStepStyle()}
         >
-          {/* Capa externa con borde */}
           <div style={{
             backgroundColor: '#D2D6DC',
             clipPath: shape,
@@ -55,7 +74,6 @@ const Stepper: React.FC<StepperProps> = ({ currentStep = 1, onStepClick }) => {
             zIndex: 0,
           }} />
 
-          {/* Capa interna con relleno, un poco más chica para mostrar borde */}
           <div style={{
             backgroundColor: getBackgroundColor(step.number),
             clipPath: shape,
