@@ -2,22 +2,34 @@ import Navbar from '../components/Navbar';
 import Stepper from '../components/Stepper';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getActividades } from '../services/actividadService';
-import { getHorarios, getFechasDisponibles } from '../services/horarioService';
+// import { useForm, useFieldArray } from 'react-hook-form';
 import { useData } from '../hooks/DataContext';
+import { getActividades } from '../services/actividadService';
+import { getHorarios, getFechasDisponibles, getHorariosDisponiblesPorFecha } from '../services/horarioService';
 import { parseISO, format } from 'date-fns';
+import { FaUser } from 'react-icons/fa';
+
+interface Participante {
+  nombre: string;
+  dni: string;
+  fechaNacimiento: string;
+  talle: 's' | 'm' | 'l' | 'xl' | 'xxl';
+}
+
+interface FormData {
+  participantes: Participante[];
+}
 
 const Paso1 = () => {
   const navigate = useNavigate();
-  const { setCantidad, setActividad, setFecha, setHora } = useData(); // Obtén las funciones de actualización del contexto
+  const { setCantidad, setActividad, setFecha, setHora } = useData();
 
-  const [localCantidad, setLocalCantidad] = useState<number | ''>('');
-  const [localActividad, setLocalActividad] = useState<number | ''>('');
-  const [localFecha, setLocalFecha] = useState('');
-  const [localHora, setLocalHora] = useState('');
+  const [actividad, setActividadLocal] = useState<number | ''>('');
+  const [cantidad, setCantidadLocal] = useState<number>(1);
+  const [fecha, setFechaLocal] = useState('');
+  const [hora, setHoraLocal] = useState('');
 
   const [actividades, setActividades] = useState<any[]>([]);
-  const [horarios, setHorarios] = useState<any[]>([]);
   const [horariosFiltrados, setHorariosFiltrados] = useState<any[]>([]);
   const [fechasDisponibles, setFechasDisponibles] = useState<string[]>([]);
 
@@ -29,37 +41,39 @@ const Paso1 = () => {
   });
 
   const handleStepClick = (step: number) => {
-    if (step === 1) navigate('/paso1');
+    if (step === 1) navigate('/');
   };
 
   const handleNext = () => {
     const newErrors = {
-      actividad: !localActividad,
-      cantidad: !localCantidad,
-      fecha: !localFecha,
-      hora: !localHora,
+      actividad: !actividad,
+      cantidad: !cantidad,
+      fecha: !fecha,
+      hora: !hora,
     };
     setErrors(newErrors);
 
     if (!Object.values(newErrors).includes(true)) {
-      // Actualiza el contexto con los datos
-      setCantidad(localCantidad);
-      setActividad(localActividad);
-      setFecha(localFecha);
-      setHora(localHora);
-      navigate('/paso2');
+      setCantidad(cantidad);
+      setActividad(actividad);
+      setFecha(fecha);
+      setHora(hora);
+      navigate('/paso2', { state: { cantidad } });
     }
   };
 
-  const isFechaHoraEnabled = localActividad && localCantidad;
+  const isFechaHoraEnabled = actividad && cantidad;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, field: string) => {
     const { value } = e.target;
 
-    if (field === 'actividad') setLocalActividad(Number(value));
-    if (field === 'cantidad') setLocalCantidad(Number(value));
-    if (field === 'fecha') setLocalFecha(value);
-    if (field === 'hora') setLocalHora(value);
+    if (field === 'actividad') setActividadLocal(Number(value));
+    if (field === 'cantidad') {
+      const parsed = Number(value);
+      setCantidadLocal(parsed > 0 ? parsed : 1);
+    }
+    if (field === 'fecha') setFechaLocal(value);
+    if (field === 'hora') setHoraLocal(value);
 
     setErrors((prev) => ({ ...prev, [field]: false }));
   };
@@ -69,9 +83,6 @@ const Paso1 = () => {
       try {
         const actividadesData = await getActividades();
         setActividades(actividadesData);
-
-        const horariosData = await getHorarios();
-        setHorarios(horariosData);
       } catch (error) {
         console.error('Error al obtener datos:', error);
       }
@@ -80,21 +91,28 @@ const Paso1 = () => {
   }, []);
 
   useEffect(() => {
-    if (localActividad && localFecha) {
-      const filtrados = horarios.filter(
-        (h) => h.id_actividad === Number(localActividad) && h.fecha === localFecha
-      );
-      setHorariosFiltrados(filtrados);
-    } else {
-      setHorariosFiltrados([]);
-    }
-  }, [localActividad, localFecha, horarios]);
+    const fetchHorarios = async () => {
+      if (actividad && fecha && cantidad) {
+        try {
+          const horariosDisponibles = await getHorariosDisponiblesPorFecha(
+            Number(actividad),
+            fecha,
+            Number(cantidad)
+          );
+          setHorariosFiltrados(horariosDisponibles);
+        } catch (error) {
+          console.error('Error al obtener horarios disponibles:', error);
+        }
+      }
+    };
+    fetchHorarios();
+  }, [actividad, fecha, cantidad]);
 
   useEffect(() => {
     const fetchFechas = async () => {
-      if (localActividad && localCantidad) {
+      if (actividad && cantidad) {
         try {
-          const fechas = await getFechasDisponibles(Number(localActividad), Number(localCantidad));
+          const fechas = await getFechasDisponibles(Number(actividad), Number(cantidad));
           const fechasOrdenadas = fechas.sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
           setFechasDisponibles(fechasOrdenadas);
         } catch (error) {
@@ -105,130 +123,28 @@ const Paso1 = () => {
       }
     };
     fetchFechas();
-  }, [localActividad, localCantidad]);
+  }, [actividad, cantidad]);
 
-  // Estilos (manteniendo los que proporcionaste)
-  const containerStyle = {
-    minHeight: '100vh',
-    display: 'flex',
-    flexDirection: 'column' as const,
-    backgroundColor: 'white',
-    alignItems: 'center',
-  };
-
-  const stepperContainerStyle = {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    padding: '24px 0',
-  };
-
-  const mainStyle = {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column' as const,
-    alignItems: 'center',
-    padding: 24,
-    width: '100%',
-  };
-
-  const cardStyle = {
-    width: 'clamp(300px, 80vw, 768px)',
-    padding: 20,
-    background: 'white',
-    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
-    borderRadius: 12,
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: 20,
-  };
-
-  const rowStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    gap: 20,
-  };
-
-  const fieldContainerStyle = {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column' as const,
-  };
-
-  const labelStyle = {
-    fontFamily: 'Montserrat',
-    fontSize: 16,
-    marginBottom: 8,
-    textAlign: 'left' as const,
-  };
-
-  const selectStyle = {
-    width: '100%',
-    padding: 10,
-    borderRadius: 8,
-    border: '1px solid #ccc',
-    fontFamily: 'Montserrat',
-    fontSize: 16,
-    boxSizing: 'border-box' as const,
-  };
-
-  const titleStyle = {
-    fontFamily: 'Montserrat',
-    fontWeight: 400,
-    fontSize: 18,
-    color: '#90A955',
-  };
-
-  const errorStyle = {
-    color: 'red',
-    fontSize: 12,
-  };
-
-  const buttonBackStyle = {
-    padding: '6px 16px',
-    backgroundColor: '#90A955',
-    color: 'black',
-    fontFamily: 'Montserrat',
-    fontSize: 14,
-    border: 'none',
-    borderRadius: 8,
-    cursor: 'pointer',
-  };
-
-  const buttonNextStyle = {
-    padding: '6px 16px',
-    backgroundColor: '#ccc',
-    color: 'white',
-    fontFamily: 'Montserrat',
-    fontSize: 14,
-    border: 'none',
-    borderRadius: 8,
-    cursor: 'pointer',
-  };
+  const formularioValido = actividad && cantidad && fecha && hora && !Object.values(errors).includes(true);
 
   return (
     <div style={containerStyle}>
       <Navbar />
-
       <div style={stepperContainerStyle}>
         <div style={{ width: 'fit-content' }}>
           <Stepper currentStep={1} onStepClick={handleStepClick} />
         </div>
       </div>
-
       <main style={mainStyle}>
         <div style={cardStyle}>
-          <h2 style={titleStyle}>
-            Completar los siguientes datos para avanzar en su inscripción
-          </h2>
+          <h2 style={titleStyle}>Completar los siguientes datos para avanzar en su inscripción</h2>
 
-          {/* Actividad y Cantidad */}
           <div style={rowStyle}>
             <div style={fieldContainerStyle}>
               <label htmlFor="actividad" style={labelStyle}>Actividad</label>
               <select
                 id="actividad"
-                value={localActividad}
+                value={actividad}
                 onChange={(e) => handleInputChange(e, 'actividad')}
                 style={{ ...selectStyle, borderColor: errors.actividad ? 'red' : '#ccc' }}
               >
@@ -241,29 +157,33 @@ const Paso1 = () => {
             </div>
 
             <div style={fieldContainerStyle}>
-              <label htmlFor="cantidad" style={labelStyle}>Cantidad de Personas</label>
-              <select
-                id="cantidad"
-                value={localCantidad}
-                onChange={(e) => handleInputChange(e, 'cantidad')}
-                style={{ ...selectStyle, borderColor: errors.cantidad ? 'red' : '#ccc' }}
-              >
-                <option value="">Seleccione...</option>
-                {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                  <option key={n} value={n}>{n}</option>
-                ))}
-              </select>
-              {errors.cantidad && <p style={errorStyle}>Campo obligatorio</p>}
+              <label htmlFor="cantidad" style={labelStyle}>Cantidad de participantes</label>
+              <div style={quantityWrapperStyle}>
+                <button
+                  type="button"
+                  onClick={() => setCantidadLocal((prev) => Math.max(Number(prev) - 1, 1))}
+                  style={quantityButtonStyle}
+                >−</button>
+                <div style={quantityInputContainerStyle}>
+                  <FaUser style={{ marginRight: 8, color: '#aaa' }} />
+                  <span style={quantityValueStyle}>{cantidad || 1}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setCantidadLocal((prev) => Math.min(Number(prev) + 1, 10))}
+                  style={quantityButtonStyle}
+                >+</button>
+              </div>
+              {errors.cantidad && <p style={errorStyle}>Indique cuántas personas participarán</p>}
             </div>
           </div>
 
-          {/* Fecha y Hora */}
           <div style={rowStyle}>
             <div style={fieldContainerStyle}>
               <label htmlFor="fecha" style={labelStyle}>Fecha</label>
               <select
                 id="fecha"
-                value={localFecha}
+                value={fecha}
                 onChange={(e) => handleInputChange(e, 'fecha')}
                 style={{
                   ...selectStyle,
@@ -274,9 +194,7 @@ const Paso1 = () => {
               >
                 <option value="">Seleccione...</option>
                 {fechasDisponibles.map((f) => (
-                  <option key={f} value={f}>
-                    {format(parseISO(f), 'dd/MM/yyyy')}
-                  </option>
+                  <option key={f} value={f}>{format(parseISO(f), 'dd/MM/yyyy')}</option>
                 ))}
               </select>
               {errors.fecha && <p style={errorStyle}>Campo obligatorio</p>}
@@ -286,7 +204,7 @@ const Paso1 = () => {
               <label htmlFor="hora" style={labelStyle}>Hora</label>
               <select
                 id="hora"
-                value={localHora}
+                value={hora}
                 onChange={(e) => handleInputChange(e, 'hora')}
                 style={{
                   ...selectStyle,
@@ -297,28 +215,169 @@ const Paso1 = () => {
               >
                 <option value="">Seleccione...</option>
                 {horariosFiltrados.map((h) => (
-                  <option key={h.id} value={h.hora_inicio}>
-                    {h.hora_inicio.slice(0, 5)} hs
-                  </option>
+                  <option key={h.id} value={h.hora_inicio}>{h.hora_inicio.slice(0, 5)} hs</option>
                 ))}
               </select>
               {errors.hora && <p style={errorStyle}>Campo obligatorio</p>}
             </div>
           </div>
 
-          {/* Botones */}
           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 30 }}>
-            <button onClick={() => navigate('/')} style={buttonBackStyle}>
-              Volver
-            </button>
-            <button onClick={handleNext} style={buttonNextStyle}>
-              Siguiente
-            </button>
+            <button onClick={() => navigate('/')} style={buttonBackStyle}>Volver</button>
+            <button
+              onClick={handleNext}
+              style={{
+                ...buttonNextStyle,
+                backgroundColor: formularioValido ? '#90A955' : '#ccc',
+                color: formularioValido ? 'black' : 'white',
+                cursor: formularioValido ? 'pointer' : 'default',
+              }}
+              disabled={!formularioValido}
+            >Siguiente</button>
           </div>
         </div>
       </main>
     </div>
   );
+};
+
+const containerStyle = {
+  minHeight: '100vh',
+  display: 'flex',
+  flexDirection: 'column' as const,
+  backgroundColor: 'white',
+  alignItems: 'center',
+};
+
+const stepperContainerStyle = {
+  width: '100%',
+  display: 'flex',
+  justifyContent: 'center',
+  padding: '24px 0',
+};
+
+const mainStyle = {
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column' as const,
+  alignItems: 'center',
+  padding: 24,
+  width: '100%',
+};
+
+const cardStyle = {
+  width: 'clamp(300px, 80vw, 768px)',
+  padding: 20,
+  background: 'white',
+  boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+  borderRadius: 12,
+  display: 'flex',
+  flexDirection: 'column' as const,
+  gap: 20,
+};
+
+const rowStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  gap: 20,
+};
+
+const fieldContainerStyle = {
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column' as const,
+};
+
+const labelStyle = {
+  fontFamily: 'Montserrat',
+  fontSize: 16,
+  marginBottom: 8,
+  textAlign: 'left' as const,
+};
+
+const selectStyle = {
+  width: '100%',
+  padding: 10,
+  borderRadius: 8,
+  border: '1px solid #ccc',
+  fontFamily: 'Montserrat',
+  fontSize: 16,
+  boxSizing: 'border-box' as const,
+};
+
+const titleStyle = {
+  fontFamily: 'Montserrat',
+  fontWeight: 400,
+  fontSize: 18,
+  color: '#90A955',
+};
+
+const errorStyle = {
+  color: 'red',
+  fontSize: 12,
+};
+
+const buttonBackStyle = {
+  padding: '6px 16px',
+  backgroundColor: '#90A955',
+  color: 'black',
+  fontFamily: 'Montserrat',
+  fontSize: 14,
+  border: 'none',
+  borderRadius: 8,
+  cursor: 'pointer',
+};
+
+const buttonNextStyle = {
+  padding: '6px 16px',
+  backgroundColor: '#ccc',
+  color: 'white',
+  fontFamily: 'Montserrat',
+  fontSize: 14,
+  border: 'none',
+  borderRadius: 8,
+  cursor: 'pointer',
+};
+
+const quantityWrapperStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  width: '100%',
+  gap: 8,
+};
+
+const quantityButtonStyle = {
+  width: 40,
+  height: 40,
+  borderRadius: 6,
+  border: '1px solid #ccc',
+  backgroundColor: 'white',
+  fontSize: 20,
+  fontWeight: 'bold',
+  color: '#666',
+  cursor: 'pointer',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: 0,
+};
+
+const quantityInputContainerStyle = {
+  flex: 1,
+  height: 40,
+  border: '1px solid #ccc',
+  borderRadius: 6,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundColor: '#f9f9f9',
+  fontFamily: 'Montserrat',
+  fontSize: 16,
+};
+
+const quantityValueStyle = {
+  fontSize: 16,
+  color: '#333',
 };
 
 export default Paso1;
