@@ -5,11 +5,16 @@ import { useNavigate } from 'react-router-dom';
 import { getActividades } from '../services/actividadService';
 import { getHorarios, getFechasDisponibles, getHorariosDisponiblesPorFecha } from '../services/horarioService';
 import { parseISO, format } from 'date-fns';
+import { FaUser } from 'react-icons/fa'; // asegurate de tener react-icons instalado
+
+
+
 const Paso1 = () => {
     const navigate = useNavigate();
 
     const [actividad, setActividad] = useState<number | ''>('');
-    const [cantidad, setCantidad] = useState<number | ''>('');
+    const [cantidad, setCantidad] = useState<number>(1);
+
     const [fecha, setFecha] = useState('');
     const [hora, setHora] = useState('');
 
@@ -42,14 +47,13 @@ const Paso1 = () => {
             navigate('/paso2', { state: { cantidad } });
         }
     };
-
     const isFechaHoraEnabled = actividad && cantidad;
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, field: string) => {
         const { value } = e.target;
 
         if (field === 'actividad') setActividad(Number(value));
-        if (field === 'cantidad') setCantidad(Number(value));
+        if (field === 'cantidad') {const parsed = Number(value); setCantidad(parsed > 0 ? parsed : 1);}
         if (field === 'fecha') setFecha(value);
         if (field === 'hora') setHora(value);
 
@@ -110,6 +114,8 @@ const Paso1 = () => {
         fetchFechas();
     }, [actividad, cantidad]);
 
+    const formularioValido = actividad && cantidad && fecha && hora && !Object.values(errors).includes(true);
+
     return (
         <div style={containerStyle}>
             <Navbar />
@@ -145,20 +151,30 @@ const Paso1 = () => {
                         </div>
 
                         <div style={fieldContainerStyle}>
-                            <label htmlFor="cantidad" style={labelStyle}>Cantidad de Personas</label>
-                            <select
-                                id="cantidad"
-                                value={cantidad}
-                                onChange={(e) => handleInputChange(e, 'cantidad')}
-                                style={{ ...selectStyle, borderColor: errors.cantidad ? 'red' : '#ccc' }}
-                            >
-                                <option value="">Seleccione...</option>
-                                {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                                    <option key={n} value={n}>{n}</option>
-                                ))}
-                            </select>
-                            {errors.cantidad && <p style={errorStyle}>Campo obligatorio</p>}
-                        </div>
+  <label htmlFor="cantidad" style={labelStyle}>Cantidad de participantes</label>
+  <div style={quantityWrapperStyle}>
+    <button
+      type="button"
+      onClick={() => setCantidad((prev) => Math.max(Number(prev) - 1, 1))}
+      style={quantityButtonStyle}
+    >
+      −
+    </button>
+    <div style={quantityInputContainerStyle}>
+      <FaUser style={{ marginRight: 8, color: '#aaa' }} />
+      <span style={quantityValueStyle}>{cantidad || 1}</span>
+    </div>
+    <button
+      type="button"
+      onClick={() => setCantidad((prev) => Math.min(Number(prev) + 1, 10))}
+      style={quantityButtonStyle}
+    >
+      +
+    </button>
+  </div>
+  {errors.cantidad && <p style={errorStyle}>Indique cuántas personas participarán</p>}
+</div>
+
                     </div>
 
                     {/* Fecha y Hora */}
@@ -213,11 +229,20 @@ const Paso1 = () => {
 
                     {/* Botones */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 30 }}>
-                        <button onClick={() => navigate('/')} style={buttonBackStyle}>
+                    <button onClick={() => navigate('/')} style={buttonBackStyle}>
                             Volver
                         </button>
-                        <button onClick={handleNext} style={buttonNextStyle}>
-                            Siguiente
+                        <button
+                        onClick={handleNext}
+                        style={{
+                            ...buttonNextStyle,
+                            backgroundColor: formularioValido ? '#90A955' : '#ccc', // mismo color que botón "Volver"
+                            color: formularioValido ? 'black' : 'white',
+                            cursor: formularioValido ? 'pointer' : 'default',
+                        }}
+                        disabled={!formularioValido}
+                        >
+                        Siguiente
                         </button>
                     </div>
                 </div>
@@ -325,5 +350,48 @@ const buttonNextStyle = {
     borderRadius: 8,
     cursor: 'pointer',
 };
+
+const quantityWrapperStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    width: '100%',
+    gap: 8,
+  };
+  
+  const quantityButtonStyle = {
+    width: 40,
+    height: 40,
+    borderRadius: 6,
+    border: '1px solid #ccc',
+    backgroundColor: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#666',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center', // este es clave para centrar horizontal y vertical
+    padding: 0,
+  };
+  
+  
+  const quantityInputContainerStyle = {
+    flex: 1,
+    height: 40,
+    border: '1px solid #ccc',
+    borderRadius: 6,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f9f9f9',
+    fontFamily: 'Montserrat',
+    fontSize: 16,
+  };
+  
+  const quantityValueStyle = {
+    fontSize: 16,
+    color: '#333',
+  };
+  
 
 export default Paso1;
