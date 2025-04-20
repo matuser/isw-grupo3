@@ -5,20 +5,11 @@ import { useNavigate } from 'react-router-dom';
 // import { useForm, useFieldArray } from 'react-hook-form';
 import { useData } from '../hooks/DataContext';
 import { getActividades } from '../services/actividadService';
-import { getHorarios, getFechasDisponibles, getHorariosDisponiblesPorFecha } from '../services/horarioService';
+import {  getFechasDisponibles, getHorariosDisponiblesPorFecha } from '../services/horarioService';
 import { parseISO, format } from 'date-fns';
 import { FaUser } from 'react-icons/fa';
 
-interface Participante {
-  nombre: string;
-  dni: string;
-  fechaNacimiento: string;
-  talle: 's' | 'm' | 'l' | 'xl' | 'xxl';
-}
 
-interface FormData {
-  participantes: Participante[];
-}
 
 const Paso1 = () => {
   const navigate = useNavigate();
@@ -140,89 +131,95 @@ const Paso1 = () => {
           <h2 style={titleStyle}>Completar los siguientes datos para avanzar en su inscripción</h2>
 
           <div style={rowStyle}>
-            <div style={fieldContainerStyle}>
-              <label htmlFor="actividad" style={labelStyle}>Actividad</label>
-              <select
-                id="actividad"
-                value={actividad}
-                onChange={(e) => handleInputChange(e, 'actividad')}
-                style={{ ...selectStyle, borderColor: errors.actividad ? 'red' : '#ccc' }}
-              >
-                <option value="">Seleccione...</option>
-                {actividades.map((act) => (
-                  <option key={act.id} value={act.id}>{act.nombre}</option>
-                ))}
-              </select>
-              {errors.actividad && <p style={errorStyle}>Campo obligatorio</p>}
-            </div>
+          <div style={fieldContainerStyle}>
+            <label htmlFor="actividad" style={labelStyle}>Actividad</label>
+            <select
+              id="actividad"
+              value={actividad}
+              onChange={(e) => handleInputChange(e, 'actividad')}
+              style={{ ...selectStyle, borderColor: errors.actividad ? 'red' : '#ccc' }}
+            >
+              <option value="">Seleccione...</option>
+              {actividades.map((act) => (
+                <option key={act.id} value={act.id}>{act.nombre}</option>
+              ))}
+            </select>
+            <p style={helperTextStyle}>Seleccione una actividad de las disponibles</p>
+            {errors.actividad && <p style={errorStyle}>Campo obligatorio</p>}
+          </div>
 
-            <div style={fieldContainerStyle}>
-              <label htmlFor="cantidad" style={labelStyle}>Cantidad de participantes</label>
-              <div style={quantityWrapperStyle}>
-                <button
-                  type="button"
-                  onClick={() => setCantidadLocal((prev) => Math.max(Number(prev) - 1, 1))}
-                  style={quantityButtonStyle}
-                >−</button>
-                <div style={quantityInputContainerStyle}>
-                  <FaUser style={{ marginRight: 8, color: '#aaa' }} />
-                  <span style={quantityValueStyle}>{cantidad || 1}</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setCantidadLocal((prev) => Math.min(Number(prev) + 1, 10))}
-                  style={quantityButtonStyle}
-                >+</button>
+
+          <div style={fieldContainerStyle}>
+            <label htmlFor="cantidad" style={labelStyle}>Cantidad de visitantes</label>
+            <div style={quantityWrapperStyle}>
+              <button
+                type="button"
+                onClick={() => setCantidadLocal((prev) => Math.max(Number(prev) - 1, 1))}
+                style={quantityButtonStyle}
+              >−</button>
+              <div style={quantityInputContainerStyle}>
+                <FaUser style={{ marginRight: 8, color: '#aaa' }} />
+                <span style={quantityValueStyle}>{cantidad || 1}</span>
               </div>
-              {errors.cantidad && <p style={errorStyle}>Indique cuántas personas participarán</p>}
+              <button
+                type="button"
+                onClick={() => setCantidadLocal((prev) => Math.min(Number(prev) + 1, 10))}
+                style={quantityButtonStyle}
+              >+</button>
             </div>
+            <p style={helperTextStyle}>Seleccione la cantidad de personas a inscribir</p>
+            {errors.cantidad && <p style={errorStyle}>Indique cuántas personas participarán</p>}
+          </div>
           </div>
 
           <div style={rowStyle}>
-            <div style={fieldContainerStyle}>
-              <label htmlFor="fecha" style={labelStyle}>Fecha</label>
-              <select
-                id="fecha"
-                value={fecha}
-                onChange={(e) => handleInputChange(e, 'fecha')}
-                style={{
-                  ...selectStyle,
-                  opacity: isFechaHoraEnabled ? 1 : 0.5,
-                  borderColor: errors.fecha ? 'red' : '#ccc',
-                }}
-                disabled={!isFechaHoraEnabled}
-              >
-                <option value="">Seleccione...</option>
-                {fechasDisponibles.map((f) => (
-                  <option key={f} value={f}>{format(parseISO(f), 'dd/MM/yyyy')}</option>
-                ))}
-              </select>
-              {errors.fecha && <p style={errorStyle}>Campo obligatorio</p>}
-            </div>
-
-            <div style={fieldContainerStyle}>
-              <label htmlFor="hora" style={labelStyle}>Hora</label>
-              <select
-                id="hora"
-                value={hora}
-                onChange={(e) => handleInputChange(e, 'hora')}
-                style={{
-                  ...selectStyle,
-                  opacity: isFechaHoraEnabled ? 1 : 0.5,
-                  borderColor: errors.hora ? 'red' : '#ccc',
-                }}
-                disabled={!isFechaHoraEnabled}
-              >
-                <option value="">Seleccione...</option>
-                {horariosFiltrados.map((h) => (
-                  <option key={h.id} value={h.hora_inicio}>{h.hora_inicio.slice(0, 5)} hs</option>
-                ))}
-              </select>
-              {errors.hora && <p style={errorStyle}>Campo obligatorio</p>}
-            </div>
+          <div style={fieldContainerStyle}>
+            <label htmlFor="fecha" style={labelStyle}>Fecha</label>
+            <select
+              id="fecha"
+              value={fecha}
+              onChange={(e) => handleInputChange(e, 'fecha')}
+              style={{
+                ...selectStyle,
+                opacity: isFechaHoraEnabled ? 1 : 0.5,
+                borderColor: errors.fecha ? 'red' : '#ccc',
+              }}
+              disabled={!isFechaHoraEnabled}
+            >
+              <option value="">Seleccione...</option>
+              {fechasDisponibles.map((f) => (
+                <option key={f} value={f}>{format(parseISO(f), 'dd/MM/yyyy')}</option>
+              ))}
+            </select>
+            <p style={helperTextStyle}>Seleccione la fecha de la actividad</p>
+            {errors.fecha && <p style={errorStyle}>Campo obligatorio</p>}
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 30 }}>
+
+          <div style={fieldContainerStyle}>
+            <label htmlFor="hora" style={labelStyle}>Hora</label>
+            <select
+              id="hora"
+              value={hora}
+              onChange={(e) => handleInputChange(e, 'hora')}
+              style={{
+                ...selectStyle,
+                opacity: isFechaHoraEnabled ? 1 : 0.5,
+                borderColor: errors.hora ? 'red' : '#ccc',
+              }}
+              disabled={!isFechaHoraEnabled}
+            >
+              <option value="">Seleccione...</option>
+              {horariosFiltrados.map((h) => (
+                <option key={h.id} value={h.hora_inicio}>{h.hora_inicio.slice(0, 5)} hs</option>
+              ))}
+            </select>
+            <p style={helperTextStyle}>Seleccione un horario de las disponibles</p>
+            {errors.hora && <p style={errorStyle}>Campo obligatorio</p>}
+          </div>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 0 }}>
             <button onClick={() => navigate('/')} style={buttonBackStyle}>Volver</button>
             <button
               onClick={handleNext}
@@ -293,7 +290,9 @@ const labelStyle = {
   fontSize: 16,
   marginBottom: 8,
   textAlign: 'left' as const,
+  color: '#90A955', // ✅ color igual al del título
 };
+
 
 const selectStyle = {
   width: '100%',
@@ -303,41 +302,53 @@ const selectStyle = {
   fontFamily: 'Montserrat',
   fontSize: 16,
   boxSizing: 'border-box' as const,
+  backgroundColor: 'white', // Fondo blanco
+  color: 'black',           // Texto negro
 };
 
 const titleStyle = {
   fontFamily: 'Montserrat',
-  fontWeight: 400,
-  fontSize: 18,
+  fontWeight: 500,
+  fontSize: 24,
   color: '#90A955',
+  textAlign: 'center' as const,
 };
+
 
 const errorStyle = {
   color: 'red',
   fontSize: 12,
 };
 
-const buttonBackStyle = {
-  padding: '6px 16px',
-  backgroundColor: '#90A955',
-  color: 'black',
+const buttonNextStyle = {
+  padding: '12px 24px',
+  backgroundColor: '#ccc',
+  color: 'white',
   fontFamily: 'Montserrat',
-  fontSize: 14,
+  fontSize: 16,
   border: 'none',
   borderRadius: 8,
   cursor: 'pointer',
 };
 
-const buttonNextStyle = {
-  padding: '6px 16px',
-  backgroundColor: '#ccc',
-  color: 'white',
+const buttonBackStyle = {
+  padding: '12px 24px',
+  backgroundColor: '#90A955',
+  color: 'black',
   fontFamily: 'Montserrat',
-  fontSize: 14,
+  fontSize: 16,
   border: 'none',
   borderRadius: 8,
   cursor: 'pointer',
 };
+
+
+const helperTextStyle = {
+  fontSize: 12,
+  color: '#31572C',
+  marginTop: 4,
+};
+
 
 const quantityWrapperStyle = {
   display: 'flex',

@@ -1,174 +1,442 @@
 import Navbar from '../components/Navbar';
 import Stepper from '../components/Stepper';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, FieldErrors, useWatch } from 'react-hook-form';
 import { useData } from '../hooks/DataContext';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-interface Participante {
-  nombre: string;
-  dni: string;
-  fechaNacimiento: string;
-  talle: 's' | 'm' | 'l' | 'xl' | 'xxl';
+interface ParticipanteBase {
+    nombre: string;
+    dni: string;
+    fechaNacimiento: string;
 }
 
+interface ParticipanteTirolesa extends ParticipanteBase {
+    tallaArnes: 's' | 'm' | 'l' | 'xl' | 'xxl' | '';
+    tallaGuantes: 's' | 'm' | 'l' | 'xl' | 'xxl' | '';
+}
+
+interface ParticipantePalestra extends ParticipanteBase {
+    tallaCalzado: string | ''; // Cambiamos a string para el select
+}
+
+interface ParticipanteJardineria extends ParticipanteBase {
+    tallaConjunto: 's' | 'm' | 'l' | 'xl' | 'xxl' | '';
+}
+
+type Participante = ParticipanteTirolesa | ParticipantePalestra | ParticipanteJardineria;
+
 interface FormData {
-  participantes: Participante[];
+    participantes: Participante[];
 }
 
 const Paso2 = () => {
-  const navigate = useNavigate();
-  const { cantidad, setParticipantes } = useData();
+    const navigate = useNavigate();
+    const { cantidad, actividad, setParticipantes } = useData();
+    const cantidadParticipantes = Number(cantidad) || 0;
+    const actividadSeleccionada = Number(actividad);
+    const [actividadNombre, setActividadNombre] = useState('');
+    const [mensajeEquipamiento, setMensajeEquipamiento] = useState('');
 
-  const { handleSubmit, register, control, formState: { errors } } = useForm<FormData>({
-    defaultValues: {
-      participantes: Array.from({ length: Number(cantidad) || 0 }, () => ({ nombre: '', dni: '', fechaNacimiento: '', talle: 's' })),
-    },
-  });
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'participantes',
-  });
+    console.log("Actividad seleccionada en Paso 2:", actividadSeleccionada); // ➡️ Para depuración
 
-  useEffect(() => {
-    const current = fields.length;
-    const target = Number(cantidad) || 0;
-    if (target > current) {
-      for (let i = current; i < target; i++) {
-        append({ nombre: '', dni: '', fechaNacimiento: '', talle: 's' });
+    const {
+        handleSubmit,
+        register,
+        control,
+        formState: { errors, isValid },
+    } = useForm<FormData>({
+        mode: 'onChange',
+        defaultValues: {
+            participantes: Array.from({ length: cantidadParticipantes }, () => ({
+                nombre: '',
+                dni: '',
+                fechaNacimiento: '',
+                ...(actividadSeleccionada === 1 && { tallaArnes: '', tallaGuantes: '' }), // Tirolesa (ID: 1)
+                ...(actividadSeleccionada === 2 && { tallaCalzado: '' }), // Palestra (ID: 2)
+                ...(actividadSeleccionada === 4 && { tallaConjunto: '' }), // Jardinería (ID: 4)
+            })),
+        },
+    });
+
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: 'participantes',
+    });
+
+    useEffect(() => {
+        const current = fields.length;
+        const target = cantidadParticipantes;
+        if (target > current) {
+            for (let i = current; i < target; i++) {
+                append({
+                    nombre: '',
+                    dni: '',
+                    fechaNacimiento: '',
+                    ...(actividadSeleccionada === 1 && { tallaArnes: '', tallaGuantes: '' }),
+                    ...(actividadSeleccionada === 2 && { tallaCalzado: '' }),
+                    ...(actividadSeleccionada === 4 && { tallaConjunto: '' }),
+                });
+            }
+        } else if (target < current) {
+            for (let i = current; i > target; i--) {
+                remove(i - 1);
+            }
+        }
+    }, [cantidadParticipantes, append, remove, actividadSeleccionada]);
+
+    useEffect(() => {
+      switch (actividadSeleccionada) {
+          case 1:
+              setActividadNombre('Tirolesa');
+              setMensajeEquipamiento('Esta actividad requiere Arnés y guantes. Por favor, indique la talla adecuada para cada participante.');
+              break;
+          case 2:
+              setActividadNombre('Palestra');
+              setMensajeEquipamiento('Esta actividad requiere calzado de escalada. Por favor, indique la talla adecuada para cada participante.');
+              break;
+          case 3:
+              setActividadNombre('Safari');
+              setMensajeEquipamiento('Para esta actividad se recomienda vestimenta cómoda y calzado cerrado.');
+              break;
+          case 4:
+              setActividadNombre('Jardinería');
+              setMensajeEquipamiento('Para esta actividad se recomienda vestimenta cómoda que pueda ensuciarse y calzado cerrado.');
+              break;
+          default:
+              setActividadNombre('');
+              setMensajeEquipamiento('');
+              break;
       }
-    } else if (target < current) {
-      for (let i = current; i > target; i--) {
-        remove(i - 1);
-      }
-    } else if (target > 0 && current === 0) {
-      for (let i = 0; i < target; i++) {
-        append({ nombre: '', dni: '', fechaNacimiento: '', talle: 's' });
-      }
-    }
-  }, [cantidad, append, remove, fields.length]);
+  }, [actividadSeleccionada]);
+    const handleStepClick = (step: number) => {
+        if (step === 1) navigate('/paso1');
+    };
 
-  const handleStepClick = (step: number) => {
-    if (step === 1) navigate('/paso1');
+    const onSubmit = (data: FormData) => {
+        setParticipantes(data.participantes);
+        navigate('/detalle');
+    };
+
+    const onErrors = (errors: FieldErrors<FormData>) => {
+        console.log("Errores de validación:", errors);
+        toast.error("Debe completar todos los datos de los participantes!");
+    };
+
+    const renderTallaInput = (index: number) => {
+        console.log(`Renderizando input de talla para participante ${index + 1}, actividad:`, actividadSeleccionada); // ➡️ Para depuración
+        switch (actividadSeleccionada) {
+            case 1: // Tirolesa (ID: 1)
+                return (
+                    <>
+                        <div style={fieldWrapperStyle}>
+                            <label htmlFor={`participantes.${index}.tallaArnes`} style={labelStyle}>Talla Arnés</label>
+                            <select
+                                id={`participantes.${index}.tallaArnes`}
+                                {...register(`participantes.${index}.tallaArnes`, { required: 'Campo obligatorio' })}
+                                style={{ ...commonInputStyle, borderColor: errors.participantes?.[index]?.tallaArnes ? 'red' : '#ccc' }}
+                            >
+                                <option value="">Seleccione...</option>
+                                <option value="s">S</option>
+                                <option value="m">M</option>
+                                <option value="l">L</option>
+                                <option value="xl">XL</option>
+                                <option value="xxl">XXL</option>
+                            </select>
+                            {errors.participantes?.[index]?.tallaArnes && <p style={errorStyle}>{errors.participantes[index].tallaArnes.message}</p>}
+                        </div>
+                        <div style={fieldWrapperStyle}>
+                            <label htmlFor={`participantes.${index}.tallaGuantes`} style={labelStyle}>Talla Guantes</label>
+                            <select
+                                id={`participantes.${index}.tallaGuantes`}
+                                {...register(`participantes.${index}.tallaGuantes`, { required: 'Campo obligatorio' })}
+                                style={{ ...commonInputStyle, borderColor: errors.participantes?.[index]?.tallaGuantes ? 'red' : '#ccc' }}
+                            >
+                                <option value="">Seleccione...</option>
+                                <option value="s">S</option>
+                                <option value="m">M</option>
+                                <option value="l">L</option>
+                                <option value="xl">XL</option>
+                                <option value="xxl">XXL</option>
+                            </select>
+                            {errors.participantes?.[index]?.tallaGuantes && <p style={errorStyle}>{errors.participantes[index].tallaGuantes.message}</p>}
+                        </div>
+                    </>
+                );
+            case 2: // Palestra (ID: 2)
+                return (
+                    <div style={fieldWrapperStyle}>
+                        <label htmlFor={`participantes.${index}.tallaCalzado`} style={labelStyle}>Talla Calzado Especial</label>
+                        <select
+                            id={`participantes.${index}.tallaCalzado`}
+                            {...register(`participantes.${index}.tallaCalzado`, { required: 'La talla de calzado es obligatoria' })}
+                            style={{ ...commonInputStyle, borderColor: errors.participantes?.[index]?.tallaCalzado ? 'red' : '#ccc' }}
+                        >
+                            <option value="">Seleccione...</option>
+                            {Array.from({ length: 10 }, (_, i) => 35 + i).map((talla) => (
+                                <option key={talla} value={talla}>{talla}</option>
+                            ))}
+                        </select>
+                        {errors.participantes?.[index]?.tallaCalzado && <p style={errorStyle}>{errors.participantes[index].tallaCalzado.message}</p>}
+                    </div>
+                );
+            case 4: // Jardinería (ID: 4)
+                return (
+                    <div style={fieldWrapperStyle}>
+                        <label htmlFor={`participantes.${index}.tallaConjunto`} style={labelStyle}>Talla Conjunto Jardinero</label>
+                        <select
+                            id={`participantes.${index}.tallaConjunto`}
+                            {...register(`participantes.${index}.tallaConjunto`, { required: 'Campo obligatorio' })}
+                            style={{ ...commonInputStyle, borderColor: errors.participantes?.[index]?.tallaConjunto ? 'red' : '#ccc' }}
+                        >
+                            <option value="">Seleccione...</option>
+                            <option value="s">S</option>
+                            <option value="m">M</option>
+                            <option value="l">L</option>
+                            <option value="xl">XL</option>
+                            <option value="xxl">XXL</option>
+                        </select>
+                        {errors.participantes?.[index]?.tallaConjunto && <p style={errorStyle}>{errors.participantes[index].tallaConjunto.message}</p>}
+                    </div>
+                );
+            default:
+                return null;
+        }
+    };
+
+    // --- ESTILOS ---
+    const commonInputStyle = {
+        width: '100%',
+        padding: '10px',
+        borderRadius: 5,
+        border: '1px solid #ccc',
+        fontFamily: 'Montserrat, sans-serif',
+        fontSize: 14,
+        boxSizing: 'border-box' as const,
+        height: 'auto',
+        backgroundColor: 'white',
+        color: '#333',
+    };
+
+    const infoBoxStyle = {
+      backgroundColor: '#d4edda',
+      color: '#155724',
+      padding: '10px 15px',
+      borderRadius: 5,
+      marginBottom: 5,
+      border: '1px solid #c3e6cb',
+      fontFamily: 'Montserrat, sans-serif',
+      fontSize: 14,
+      textAlign: 'center',
   };
 
-  const onSubmit = (data: FormData) => {
-    setParticipantes(data.participantes);
-    navigate('/detalle');
-  };
+    const labelStyle = {
+        fontFamily: 'Montserrat, sans-serif',
+        fontSize: 14,
+        marginBottom: 5,
+        textAlign: 'left' as const,
+        display: 'block',
+        color: '#555',
+        fontWeight: 'normal',
+    };
 
-  const commonInputStyle = {
-    width: '100%',
-    padding: 10,
-    borderRadius: 8,
-    border: '1px solid #ccc',
-    fontFamily: 'Montserrat',
-    fontSize: 16,
-    boxSizing: 'border-box' as const,
-  };
+    const errorStyle = {
+        color: 'red',
+        fontSize: 12,
+        marginTop: '2px',
+    };
 
-  const labelStyle = {
-    fontFamily: 'Montserrat',
-    fontSize: 16,
-    marginBottom: 8,
-    textAlign: 'left' as const,
-  };
+    const fieldWrapperStyle = {
+        display: 'flex',
+        flexDirection: 'column' as const,
+        flexBasis: 'calc(50% - 10px)',
+        flexGrow: 1,
+    };
 
-  const errorStyle = {
-    color: 'red',
-    fontSize: 12,
-  };
+    const rowStyle = {
+        display: 'flex',
+        flexDirection: 'row' as const,
+        flexWrap: 'wrap' as const,
+        gap: '20px',
+        marginBottom: '10px',
+    };
 
-  return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'white', alignItems: 'center' }}>
-      <Navbar />
-      <div style={{ width: '100%', display: 'flex', justifyContent: 'center', padding: '24px 0' }}>
-        <Stepper currentStep={2} onStepClick={handleStepClick} />
-      </div>
-      <main style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 24, width: '100%' }}>
-        <div style={{ width: 'clamp(300px, 80vw, 768px)', padding: 20, background: 'white', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 12, display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <h2 style={{ fontFamily: 'Montserrat', fontWeight: 400, fontSize: 18, color: '#90A955', textAlign: 'center' }}>Ingrese los datos de los participantes</h2>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            {fields.map((field, index) => (
-              <div key={field.id} style={{ marginBottom: 20, padding: 15, border: '1px solid #eee', borderRadius: 8 }}>
-                <h3 style={{ fontFamily: 'Montserrat', fontSize: 16, fontWeight: 500, marginBottom: 10, color: '#333' }}>{`Participante ${index + 1}`}</h3>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
+    const participantGroupStyle = {
+        marginBottom: '20px',
+        padding: '15px',
+        border: '1px solid #ddd',
+        borderRadius: 8,
+        backgroundColor: '#fff',
+    };
 
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <label style={labelStyle}>Nombre</label>
-                    <input
-                      type="text"
-                      {...register(`participantes.${index}.nombre`, { required: 'El nombre es obligatorio' })}
-                      style={{ ...commonInputStyle, borderColor: errors.participantes?.[index]?.nombre ? 'red' : '#ccc' }}
-                    />
-                    {errors.participantes?.[index]?.nombre && <p style={errorStyle}>{errors.participantes[index].nombre.message}</p>}
-                  </div>
+    const participantTitleStyle = {
+        fontFamily: 'Montserrat, sans-serif',
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: '10px',
+        color: '#333',
+        textAlign: 'left' as const,
+    };
 
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <label style={labelStyle}>DNI</label>
-                    <input
-                      type="text"
-                      {...register(`participantes.${index}.dni`, {
-                        required: 'El DNI es obligatorio',
-                        pattern: {
-                          value: /^[0-9]+$/,
-                          message: 'Solo se permiten números',
-                        },
-                        minLength: {
-                          value: 8,
-                          message: 'El DNI debe tener al menos 8 dígitos',
-                        },
-                      })}
-                      style={{ ...commonInputStyle, borderColor: errors.participantes?.[index]?.dni ? 'red' : '#ccc' }}
-                    />
-                    {errors.participantes?.[index]?.dni && <p style={errorStyle}>{errors.participantes[index].dni.message}</p>}
-                  </div>
+    const mainContainerStyle = {
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: 4,
+        width: '100%',
+        backgroundColor: '#fff',
+    };
 
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <label style={labelStyle}>Fecha de nacimiento</label>
-                    <input
-                      type="date"
-                      {...register(`participantes.${index}.fechaNacimiento`, {
-                        required: 'Campo obligatorio',
-                        validate: (value) => {
-                          const fechaIngresada = new Date(value);
-                          const hoy = new Date();
-                          hoy.setHours(0, 0, 0, 0);
-                          return fechaIngresada <= hoy || 'La fecha no puede ser futura';
-                        },
-                      })}
-                      style={{ ...commonInputStyle, borderColor: errors.participantes?.[index]?.fechaNacimiento ? 'red' : '#ccc' }}
-                    />
-                    {errors.participantes?.[index]?.fechaNacimiento && <p style={errorStyle}>{errors.participantes[index].fechaNacimiento.message}</p>}
-                  </div>
+    const formContainerStyle = {
+        width: 'clamp(300px, 80vw, 768px)',
+        padding: 20,
+        background: 'white',
+        boxShadow: '0px 2px 4px rgb(255, 255, 255)',
+        borderRadius: 8,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 15,
+    };
 
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <label style={labelStyle}>Talle</label>
-                    <select
-                      {...register(`participantes.${index}.talle`, { required: 'Campo obligatorio' })}
-                      style={{ ...commonInputStyle, borderColor: errors.participantes?.[index]?.talle ? 'red' : '#ccc' }}
-                    >
-                      <option value="">Seleccionar talle</option>
-                      <option value="s">S</option>
-                      <option value="m">M</option>
-                      <option value="l">L</option>
-                      <option value="xl">XL</option>
-                      <option value="xxl">XXL</option>
-                    </select>
-                    {errors.participantes?.[index]?.talle && <p style={errorStyle}>{errors.participantes[index].talle.message}</p>}
-                  </div>
-                </div>
-              </div>
-            ))}
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 30 }}>
-              <button onClick={() => navigate(-1)} type="button" style={{ padding: '6px 16px', backgroundColor: '#90A955', color: 'black', fontFamily: 'Montserrat', fontSize: 14, border: 'none', borderRadius: 8, cursor: 'pointer' }}>Volver</button>
-              <button type="submit" style={{ padding: '6px 16px', backgroundColor: '#ccc', color: 'white', fontFamily: 'Montserrat', fontSize: 14, border: 'none', borderRadius: 8, cursor: 'pointer' }}>Siguiente</button>
+    const mainTitleStyle = {
+        fontFamily: 'Montserrat, sans-serif',
+        fontWeight: '400',
+        fontSize: 24,
+        color: '#3d405b',
+        textAlign: 'center',
+        marginBottom: 5,
+    };
+
+    const subTitleStyle = {
+        fontFamily: 'Montserrat, sans-serif',
+        fontWeight: '400',
+        fontSize: 16,
+        color: '#90A955',
+        textAlign: 'center',
+        marginBottom: 10,
+    };
+
+    const buttonBaseStyle = {
+        padding: '8px 15px',
+        fontFamily: 'Montserrat, sans-serif',
+        fontSize: 14,
+        fontWeight: 'bold',
+        border: 'none',
+        borderRadius: 5,
+        cursor: 'pointer',
+        transition: 'opacity 0.3s ease',
+    };
+
+    const buttonVolverStyle = {
+        ...buttonBaseStyle,
+        backgroundColor: '#90A955',
+        color: 'white',
+    };
+
+    const buttonSiguienteStyle = {
+        ...buttonBaseStyle,
+        backgroundColor: '#31572C',
+        color: 'white',
+    };
+
+    const buttonSiguienteDisabledStyle = {
+        ...buttonSiguienteStyle,
+        backgroundColor: '#ccc',
+        cursor: 'not-allowed',
+        opacity: 0.6,
+    };
+
+    return (
+        <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#fff', alignItems: 'center' }}>
+            <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />
+            <Navbar />
+            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', padding: '15px 0' }}>
+                <Stepper currentStep={2} onStepClick={handleStepClick} step1Color="#90A955" />
             </div>
-          </form>
+            <main style={mainContainerStyle}>
+                <div style={formContainerStyle}>
+                    <h2 style={mainTitleStyle}>Inscripción de participantes</h2>
+                    <p style={subTitleStyle}>Complete los siguientes datos para avanzar en su inscripción</p>
+                    {mensajeEquipamiento && <div style={infoBoxStyle}>{mensajeEquipamiento}</div>}
+                    <form onSubmit={handleSubmit(onSubmit, onErrors)}>
+                        {fields.map((field, index) => (
+                            <div key={field.id} style={participantGroupStyle}>
+                                <h3 style={participantTitleStyle}>{`Datos participante ${index + 1}:`}</h3>
+                                <div style={rowStyle}>
+                                    <div style={fieldWrapperStyle}>
+                                        <label htmlFor={`participantes.${index}.nombre`} style={labelStyle}>Nombre y apellido</label>
+                                        <input
+                                            id={`participantes.${index}.nombre`}
+                                            type="text"
+                                            placeholder="Ingrese su nombre"
+                                            {...register(`participantes.${index}.nombre`, { required: 'El nombre es obligatorio' })}
+                                            style={{ ...commonInputStyle, borderColor: errors.participantes?.[index]?.nombre ? 'red' : '#ccc' }} // <- ¡Añadimos !important
+                                        />
+                                        {errors.participantes?.[index]?.nombre && <p style={errorStyle}>{errors.participantes[index].nombre.message}</p>}
+                                    </div>
+                                    <div style={fieldWrapperStyle}>
+                                        <label htmlFor={`participantes.${index}.dni`} style={labelStyle}>Dni</label>
+                                        <input
+                                            id={`participantes.${index}.dni`}
+                                            type="text"
+                                            placeholder="Ingrese su dni (sin puntos)"
+                                            {...register(`participantes.${index}.dni`, {
+                                                required: 'El DNI es obligatorio',
+                                                pattern: { value: /^[0-9]+$/, message: 'Solo se permiten números' },
+                                                minLength: { value: 8, message: 'El DNI debe tener al menos 8 dígitos' }
+                                            })}
+                                            style={{ ...commonInputStyle, borderColor: errors.participantes?.[index]?.dni ? 'red' : '#ccc' }} // <- ¡Añadimos !important
+                                        />
+                                        {errors.participantes?.[index]?.dni && <p style={errorStyle}>{errors.participantes[index].dni.message}</p>}
+                                    </div>
+                                </div>
+
+                                <div style={rowStyle}>
+                                    <div style={fieldWrapperStyle}>
+                                        <label htmlFor={`participantes.${index}.fechaNacimiento`} style={labelStyle}>Fecha de nacimiento</label>
+                                        <input
+                                            id={`participantes.${index}.fechaNacimiento`}
+                                            type="date"
+                                            {...register(`participantes.${index}.fechaNacimiento`, {
+                                                required: 'Campo obligatorio',
+                                                validate: (value) => new Date(value) <= new Date()
+                                            })}
+                                            style={{ ...commonInputStyle,borderColor: errors.participantes?.[index]?.fechaNacimiento ? 'red' : '#ccc' }}
+                                        />
+                                        {errors.participantes?.[index]?.fechaNacimiento && <p style={errorStyle}>{errors.participantes[index].fechaNacimiento.message}</p>}
+                                    </div>
+                                    {renderTallaInput(index)}
+                                </div>
+                            </div>
+                        ))}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
+                            <button onClick={() => navigate(-1)} type="button" style={buttonVolverStyle}>Volver</button>
+                            <button
+                                type="submit"
+                                style={!isValid ? buttonSiguienteDisabledStyle : buttonSiguienteStyle}
+                                disabled={!isValid}
+                            >
+                                Siguiente
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </main>
         </div>
-      </main>
-    </div>
-  );
+    );
 };
 
 export default Paso2;
