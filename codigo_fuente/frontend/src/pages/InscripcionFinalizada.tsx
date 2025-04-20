@@ -1,31 +1,24 @@
-import React from 'react';
-import Stepper from '../components/Stepper';
-import Navbar from '../components/Navbar';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiList, FiUser } from 'react-icons/fi';
 import { useData } from '../hooks/DataContext';
+import { FiList, FiUser } from 'react-icons/fi';
+import * as QRCodeReact from 'qrcode.react';
+import Navbar from '../components/Navbar';
 
-const Detalle = () => {
+const InscripcionFinalizada = () => {
   const navigate = useNavigate();
   const { cantidad, actividad, fecha, hora, participantes, findActividadNombre } = useData(); // Obtenemos la función
 
   const actividadNombre = findActividadNombre(actividad); // Usamos la función para obtener el nombre
 
-  const handleStepClick = (step: number) => {
-    if (step === 1) navigate('/paso1');
-    if (step === 2) navigate('/paso2');
-  };
+  const [inscripcionId, setInscripcionId] = useState<string | null>(null);
 
-  const handleFinalizarInscripcion = () => {
-    console.log('Datos a guardar:', {
-      cantidad,
-      actividad,
-      fecha,
-      hora,
-      participantes,
-    });
-    navigate('/inscripcion-finalizada');
-  };
+  useEffect(() => {
+    // ... (tu lógica para guardar la inscripción y obtener el ID) ...
+  }, [actividad, cantidad, fecha, hora, participantes]);
+
+  const fechaFormateada = fecha ? new Date(fecha).toLocaleDateString() : 'No especificada';
+  const backendInscripcionUrl = inscripcionId ? `/api/v1/inscripciones/${inscripcionId}` : '';
 
   return (
     <div style={{
@@ -43,9 +36,14 @@ const Detalle = () => {
         alignItems: 'center',
         padding: '24px 0',
       }}>
-        <div style={{ width: 'fit-content', justifyContent: 'center' }}>
-          <Stepper currentStep={3} onStepClick={handleStepClick} />
-        </div>
+      </div>
+      <div style={{width: '100%', padding: 5, background: 'white', overflow: 'hidden', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 5, display: 'inline-flex'}}>
+        {/* Tilde verde */}
+        <svg width="64" height="40" viewBox="0 0 64 63" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="32" cy="31.5" r="31" fill="#12BA12"/>
+            <path d="M20.285 33.626L28.39 41.73L43.714 26.407" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+        <div style={{ textAlign: 'center', color: '#31572C', fontSize: 20, fontFamily: 'Montserrat', fontWeight: '50', lineHeight: 'normal', wordWrap: 'break-word'}}>Inscripción finalizada con éxito!</div>
       </div>
       <main style={{
         flex: 1,
@@ -78,7 +76,7 @@ const Detalle = () => {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-              <div style={{ color: 'black', fontSize: 20, fontFamily: 'Montserrat', fontWeight: '400', wordWrap: 'break-word' }}>Fecha: {fecha ? new Date(fecha).toLocaleDateString() : 'No especificada'}</div>
+              <div style={{ color: 'black', fontSize: 20, fontFamily: 'Montserrat', fontWeight: '400', wordWrap: 'break-word' }}>Fecha: {fechaFormateada}</div>
             </div>
           </div>
 
@@ -112,52 +110,44 @@ const Detalle = () => {
             </ul>
           </div>
 
-          <div style={{
-            position: 'relative',
-            width: '100%',
-            paddingTop: 30,
-          }}>
-            <button onClick={() => navigate(-1)} style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              padding: '8px 16px',
-              background: '#D91600',
-              overflow: 'hidden',
-              borderRadius: 12,
-              color: 'white',
-              fontSize: 16,
-              fontFamily: 'Montserrat',
-              fontWeight: '400',
-              wordWrap: 'break-word',
-              border: 'none',
-              cursor: 'pointer',
-            }}>
-              Cancelar
-            </button>
-            <button onClick={handleFinalizarInscripcion} style={{
-              position: 'absolute',
-              bottom: 0,
-              right: 0,
-              padding: '8px 16px',
-              background: '#90A955',
-              overflow: 'hidden',
-              borderRadius: 12,
-              color: 'white',
-              fontSize: 16,
-              fontFamily: 'Montserrat',
-              fontWeight: '400',
-              wordWrap: 'break-word',
-              border: 'none',
-              cursor: 'pointer',
-            }}>
-              Finalizar Inscripción
-            </button>
+          {/* Código de inscripción y QR */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 15, marginTop: 20 }}>
+            <div style={{ color: '#31572C', fontSize: 18, fontFamily: 'Montserrat', fontWeight: '400', wordWrap: 'break-word' }}>
+              Código de inscripción: <span style={{ fontWeight: '600' }}>358947</span> {/* Aquí podrías mostrar el código real */}
+            </div>
+            <div style={{ color: '#31572C', fontSize: 18, fontFamily: 'Montserrat', fontWeight: '400', wordWrap: 'break-word' }}>
+              Presente este QR al inicio de la actividad:
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
+              {inscripcionId ? (
+                <QRCodeReact.QRCodeSVG value={backendInscripcionUrl} size={128} level="H" />
+              ) : (
+                <p>Generando código QR...</p>
+              )}
+            </div>
           </div>
+
+          {/* Botón para inscribirse a otra actividad */}
+          <button onClick={() => navigate('/paso1')} style={{
+            padding: '8px 16px',
+            background: '#90A955',
+            overflow: 'hidden',
+            borderRadius: 12,
+            color: 'white',
+            fontSize: 16,
+            fontFamily: 'Montserrat',
+            fontWeight: '400',
+            wordWrap: 'break-word',
+            border: 'none',
+            cursor: 'pointer',
+            marginTop: 30,
+          }}>
+            Inscribirse a otra actividad
+          </button>
         </div>
       </main>
     </div>
   );
 };
 
-export default Detalle;
+export default InscripcionFinalizada;
