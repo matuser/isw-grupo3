@@ -59,14 +59,32 @@ class HorarioActividadService {
   }
   
   async findHorariosPorFecha(idActividad, fecha, cantidadPersonas) {
+    const today = new Date().toISOString().split('T')[0];
+  
+    const whereClause = {
+      id_actividad: idActividad,
+      fecha,
+      cupo_disponible: {
+        [Op.gte]: cantidadPersonas
+      }
+    };
+  
+    if (fecha === today) {
+      const now = new Date();
+      now.setHours(now.getHours() + 1);
+      now.setMinutes(0); // redondea a la siguiente hora en punto
+      now.setSeconds(0);
+      now.setMilliseconds(0);
+      
+      const horaRedondeada = now.toTimeString().slice(0, 5); // 'HH:mm'
+  
+      whereClause.hora_inicio = {
+        [Op.gte]: horaRedondeada
+      };
+    }
+  
     const horarios = await models.HorarioActividad.findAll({
-      where: {
-        id_actividad: idActividad,
-        fecha: fecha,
-        cupo_disponible: {
-          [Op.gte]: cantidadPersonas
-        }
-      },
+      where: whereClause,
       include: ['actividad']
     });
   
