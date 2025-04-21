@@ -187,7 +187,6 @@ const InscripcionFinalizada = () => {
 
             // Validar datos mínimos del participante antes de llamar a la API.
             if (!participante.dni || !participante.nombre) {
-               console.warn(`Saltando participante ${index + 1} por falta de DNI o nombre.`);
                // Devolvemos una promesa resuelta con un estado especial para identificarla luego.
                // Esto permite que Promise.allSettled continúe con los demás.
                return Promise.resolve({ status: 'skipped', reason: 'Datos incompletos' });

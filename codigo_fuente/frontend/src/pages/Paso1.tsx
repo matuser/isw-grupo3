@@ -77,6 +77,8 @@ const Paso1 = () => {
     setErrors((prev) => ({ ...prev, [field]: false }));
   };
 
+  
+
   // Mantener sincronización si cambia el contexto
   useEffect(() => {
     setActividadLocal(actividadCtx || '');
@@ -120,7 +122,7 @@ const Paso1 = () => {
       if (actividad && cantidad) {
         try {
           const fechas = await getFechasDisponibles(Number(actividad), Number(cantidad));
-          const fechasOrdenadas = fechas.sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+          const fechasOrdenadas = fechas.sort((a: string, b: string) => new Date(a).getTime() - new Date(b).getTime());
           setFechasDisponibles(fechasOrdenadas);
         } catch (error) {
           console.error('Error al obtener fechas disponibles:', error);
