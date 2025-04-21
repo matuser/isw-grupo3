@@ -11,6 +11,11 @@ interface ParticipanteBase {
     nombre: string;
     dni: string;
     fechaNacimiento: string;
+    talleArnes?: string;
+    tallaGuantes?: string;
+    tallaCalzado?: string;
+    tallaConjunto?: string;
+
 }
 
 interface ParticipanteTirolesa extends ParticipanteBase {
@@ -66,26 +71,38 @@ const Paso2 = () => {
         name: 'participantes',
     });
 
+
     useEffect(() => {
         const current = fields.length;
         const target = cantidadParticipantes;
+    
         if (target > current) {
             for (let i = current; i < target; i++) {
-                append({
+                const baseData: any = {
                     nombre: '',
                     dni: '',
                     fechaNacimiento: '',
-                    ...(actividadSeleccionada === 1 && { tallaArnes: '', tallaGuantes: '' }),
-                    ...(actividadSeleccionada === 2 && { tallaCalzado: '' }),
-                    ...(actividadSeleccionada === 4 && { tallaConjunto: '' }),
-                });
+                };
+    
+                if (actividadSeleccionada === 1) {
+                    Object.assign(baseData, { tallaArnes: '', tallaGuantes: '' });
+                }
+                if (actividadSeleccionada === 2) {
+                    Object.assign(baseData, { tallaCalzado: '' });
+                }
+                if (actividadSeleccionada === 4) {
+                    Object.assign(baseData, { tallaConjunto: '' });
+                }
+    
+                append(baseData);
             }
         } else if (target < current) {
             for (let i = current; i > target; i--) {
                 remove(i - 1);
             }
         }
-    }, [cantidadParticipantes, append, remove, actividadSeleccionada]);
+    }, [cantidadParticipantes, append, remove, fields.length, actividadSeleccionada]);
+    
 
     useEffect(() => {
       switch (actividadSeleccionada) {
@@ -351,107 +368,116 @@ const Paso2 = () => {
 
     return (
         <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#fff', alignItems: 'center' }}>
-            <ToastContainer
-                position="top-center"
-                autoClose={3000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-            />
-            <Navbar />
-            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', padding: '15px 0' }}>
-                <Stepper currentStep={2} onStepClick={handleStepClick} step1Color="#90A955" />
-            </div>
-            <main style={mainContainerStyle}>
-                <div style={formContainerStyle}>
-                    <h2 style={mainTitleStyle}>Inscripción de participantes</h2>
-                    <p style={subTitleStyle}>Complete los siguientes datos para avanzar en su inscripción</p>
-                    {mensajeEquipamiento && <div style={infoBoxStyle}>{mensajeEquipamiento}</div>}
-                    <form onSubmit={handleSubmit(onSubmit, onErrors)}>
-                        {fields.map((field, index) => (
-                            <div key={field.id} style={participantGroupStyle}>
-                                <h3 style={participantTitleStyle}>{`Datos participante ${index + 1}:`}</h3>
-                                <div style={rowStyle}>
-                                    <div style={fieldWrapperStyle}>
-                                        <label htmlFor={`participantes.${index}.nombre`} style={labelStyle}>Nombre y apellido</label>
-                                        <input
-                                            id={`participantes.${index}.nombre`}
-                                            type="text"
-                                            placeholder="Ingrese su nombre"
-                                            {...register(`participantes.${index}.nombre`, { required: 'El nombre es obligatorio',
-                                                pattern: { value: /^[a-zA-ZÀ-ÿ\s]+$/, message: 'Solo se permiten letras' },
-                                                minLength: { value: 3, message: 'El nombre debe tener al menos 3 caracteres' }
-                                             })}
-                                            style={{ ...commonInputStyle, borderColor: errors.participantes?.[index]?.nombre ? 'red' : '#ccc' }} // <- ¡Añadimos !important
-                                        />
-                                        {errors.participantes?.[index]?.nombre && <p style={errorStyle}>{errors.participantes[index].nombre.message}</p>}
-                                    </div>
-                                    <div style={fieldWrapperStyle}>
-                                        <label htmlFor={`participantes.${index}.dni`} style={labelStyle}>Dni</label>
-                                        <input
-                                            id={`participantes.${index}.dni`}
-                                            type="text"
-                                            placeholder="Ingrese su dni (sin puntos)"
-                                            {...register(`participantes.${index}.dni`, {
-                                                required: 'El DNI es obligatorio',
-                                                pattern: { value: /^[0-9]+$/, message: 'Solo se permiten números' },
-                                                minLength: { value: 8, message: 'El DNI debe tener al menos 8 dígitos' },
-                                                validate: (value) => {
-                                                  const dnis = control._formValues.participantes?.map((p: Participante) => p.dni);
-                                                  const duplicados = dnis.filter((dni: string) => dni === value);
-                                                  return duplicados.length <= 1 || 'Este DNI ya fue ingresado para otro participante';
-                                                }
-                                              })}
-                                              
-                                            style={{ ...commonInputStyle, borderColor: errors.participantes?.[index]?.dni ? 'red' : '#ccc' }} // <- ¡Añadimos !important
-                                        />
-                                        {errors.participantes?.[index]?.dni && <p style={errorStyle}>{errors.participantes[index].dni.message}</p>}
-                                    </div>
-                                </div>
-
-                                <div style={rowStyle}>
-                                    <div style={fieldWrapperStyle}>
-                                        <label htmlFor={`participantes.${index}.fechaNacimiento`} style={labelStyle}>Fecha de nacimiento</label>
-                                        <input
-                                            id={`participantes.${index}.fechaNacimiento`}
-                                            type="date"
-                                            {...register(`participantes.${index}.fechaNacimiento`, {
-                                                required: 'Campo obligatorio',
-                                                validate: (value) => {
-                                                    const fecha = new Date (value); 
-                                                    const edad = new Date().getFullYear() - fecha.getFullYear();
-                                                    return edad >= 5 || 'El participante debe ser tener al menos 5 años de edad';
-                                                }
-                                            })}
-                                            style={{ ...commonInputStyle,borderColor: errors.participantes?.[index]?.fechaNacimiento ? 'red' : '#ccc' }}
-                                        />
-                                        {errors.participantes?.[index]?.fechaNacimiento && <p style={errorStyle}>{errors.participantes[index].fechaNacimiento.message}</p>}
-                                    </div>
-                                    {renderTallaInput(index)}
-                                </div>
-                            </div>
-                        ))}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
-                        <button onClick={() => navigate('/paso1', { state: { desde: true } })} type="button" style={buttonVolverStyle}>
-                            Volver
-                            </button>
-                            <button
-                                type="submit"
-                                style={!isValid ? buttonSiguienteDisabledStyle : buttonSiguienteStyle}
-                                disabled={!isValid}
-                            >
-                                Siguiente
-                            </button>
-                        </div>
-                    </form>
+          <ToastContainer
+            position="top-center"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
+          <Navbar />
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', padding: '15px 0' }}>
+            <Stepper currentStep={2} onStepClick={handleStepClick} Step2Color="#90A955" />
+          </div>
+          <main style={mainContainerStyle}>
+            <div style={formContainerStyle}>
+              <h2 style={mainTitleStyle}>Inscripción de participantes</h2>
+              <p style={subTitleStyle}>Complete los siguientes datos para avanzar en su inscripción</p>
+              {mensajeEquipamiento && <div style={infoBoxStyle}>{mensajeEquipamiento}</div>}
+              <form onSubmit={handleSubmit(onSubmit, onErrors)}>
+                {fields.map((field, index) => (
+                  <div key={field.id} style={participantGroupStyle}>
+                    <h3 style={participantTitleStyle}>{`Datos participante ${index + 1}:`}</h3>
+                    <div style={rowStyle}>
+                      <div style={fieldWrapperStyle}>
+                        <label htmlFor={`participantes.${index}.nombre`} style={labelStyle}>Nombre y apellido</label>
+                        <input
+                          id={`participantes.${index}.nombre`}
+                          type="text"
+                          placeholder="Ingrese su nombre"
+                          {...register(`participantes.${index}.nombre`, {
+                            required: 'El nombre es obligatorio',
+                            pattern: { value: /^[A-Za-z\s]+$/i, message: 'Solo se permiten letras' },
+                            minLength: { value: 3, message: 'El nombre debe tener al menos 3 caracteres' },
+                          })}
+                          style={{
+                            ...commonInputStyle,
+                            borderColor: errors?.participantes?.[index]?.nombre ? 'red' : '#ccc',
+                          }}
+                        />
+                        {errors?.participantes?.[index]?.nombre?.message && (
+                          <p style={errorStyle}>{errors.participantes[index].nombre.message}</p>
+                        )}
+                      </div>
+                      <div style={fieldWrapperStyle}>
+                        <label htmlFor={`participantes.${index}.dni`} style={labelStyle}>Dni</label>
+                        <input
+                          id={`participantes.${index}.dni`}
+                          type="text"
+                          placeholder="Ingrese su dni (sin puntos)"
+                          {...register(`participantes.${index}.dni`, {
+                            required: 'El DNI es obligatorio',
+                            pattern: { value: /^[0-9]+$/, message: 'Solo se permiten números' },
+                            minLength: { value: 8, message: 'El DNI debe tener al menos 8 dígitos' },
+                            validate: (value) => {
+                              const dnis = control._formValues.participantes?.map((p: Participante) => p.dni);
+                              const duplicados = dnis.filter((dni: string) => dni === value);
+                              return duplicados.length <= 1 || 'Este DNI ya fue ingresado para otro participante';
+                            },
+                          })}
+                          style={{ ...commonInputStyle, borderColor: errors?.participantes?.[index]?.dni ? 'red' : '#ccc' }}
+                        />
+                        {errors?.participantes?.[index]?.dni?.message && (
+                          <p style={errorStyle}>{errors.participantes[index].dni.message}</p>
+                        )}
+                      </div>
+                    </div>
+      
+                    <div style={rowStyle}>
+                      <div style={fieldWrapperStyle}>
+                        <label htmlFor={`participantes.${index}.fechaNacimiento`} style={labelStyle}>Fecha de nacimiento</label>
+                        <input
+                          id={`participantes.${index}.fechaNacimiento`}
+                          type="date"
+                          {...register(`participantes.${index}.fechaNacimiento`, {
+                            required: 'Campo obligatorio',
+                            validate: (value) => {
+                              const fecha = new Date(value);
+                              const edad = new Date().getFullYear() - fecha.getFullYear();
+                              return edad >= 5 || 'El participante debe ser tener al menos 5 años de edad';
+                            },
+                          })}
+                          style={{ ...commonInputStyle, borderColor: errors?.participantes?.[index]?.fechaNacimiento ? 'red' : '#ccc' }}
+                        />
+                        {errors?.participantes?.[index]?.fechaNacimiento?.message && (
+                          <p style={errorStyle}>{errors.participantes[index].fechaNacimiento.message}</p>
+                        )}
+                      </div>
+                      {renderTallaInput(index)}
+                    </div>
+                  </div>
+                ))}
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
+                  <button onClick={() => navigate('/paso1', { state: { desde: true } })} type="button" style={buttonVolverStyle}>
+                    Volver
+                  </button>
+                  <button
+                    type="submit"
+                    style={!isValid ? buttonSiguienteDisabledStyle : buttonSiguienteStyle}
+                    disabled={!isValid}
+                  >
+                    Siguiente
+                  </button>
                 </div>
-            </main>
+              </form>
+            </div>
+          </main>
         </div>
-    );
-};
+      );
+}
 
 export default Paso2;
