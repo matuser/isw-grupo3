@@ -1,6 +1,6 @@
 import Navbar from '../components/Navbar';
 import Stepper from '../components/Stepper';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm, useFieldArray, FieldErrors, useWatch } from 'react-hook-form';
 import { useData } from '../hooks/DataContext';
@@ -9,9 +9,9 @@ import 'react-toastify/dist/ReactToastify.css';
 
 interface ParticipanteBase {
     nombre: string;
-    dni: string;
+    dni?: string;
     fechaNacimiento: string;
-    talleArnes?: string;
+    tallaArnes?: string;
     tallaGuantes?: string;
     tallaCalzado?: string;
     tallaConjunto?: string;
@@ -19,8 +19,8 @@ interface ParticipanteBase {
 }
 
 interface ParticipanteTirolesa extends ParticipanteBase {
-    tallaArnes: 's' | 'm' | 'l' | 'xl' | 'xxl' | '';
-    tallaGuantes: 's' | 'm' | 'l' | 'xl' | 'xxl' | '';
+    tallaArnes?: 's' | 'm' | 'l' | 'xl' | 'xxl' | '';
+    tallaGuantes?: 's' | 'm' | 'l' | 'xl' | 'xxl' | '';
 }
 
 interface ParticipantePalestra extends ParticipanteBase {
@@ -132,7 +132,7 @@ const Paso2 = () => {
         if (step === 1) navigate('/paso1');
     };
 
-    const onSubmit = (data: FormData) => {
+    const onSubmit: SubmitHandler<FormData> = (data) => {
         setParticipantes(data.participantes);
         navigate('/detalle');
     };
@@ -383,11 +383,11 @@ const Paso2 = () => {
           <div style={{ width: '100%', display: 'flex', justifyContent: 'center', padding: '15px 0' }}>
             <Stepper currentStep={2} onStepClick={handleStepClick} Step2Color="#90A955" />
           </div>
-          <main style={mainContainerStyle}>
-            <div style={formContainerStyle}>
-              <h2 style={mainTitleStyle}>Inscripción de participantes</h2>
-              <p style={subTitleStyle}>Complete los siguientes datos para avanzar en su inscripción</p>
-              {mensajeEquipamiento && <div style={infoBoxStyle}>{mensajeEquipamiento}</div>}
+          <main style={mainContainerStyle as React.CSSProperties}>
+            <div style={formContainerStyle as React.CSSProperties}>
+              <h2 style={mainTitleStyle as React.CSSProperties}>Inscripción de participantes</h2>
+              <p style={subTitleStyle as React.CSSProperties}>Complete los siguientes datos para avanzar en su inscripción</p>
+              {mensajeEquipamiento && <div style={infoBoxStyle as React.CSSProperties}>{mensajeEquipamiento}</div>}
               <form onSubmit={handleSubmit(onSubmit, onErrors)}>
                 {fields.map((field, index) => (
                   <div key={field.id} style={participantGroupStyle}>

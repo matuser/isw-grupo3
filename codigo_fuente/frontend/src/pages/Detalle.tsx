@@ -134,28 +134,51 @@ const Detalle = () => {
               <FiUser size={18} color="black" />
               <div style={{ color: 'black', fontSize: 18, fontFamily: 'Montserrat', fontWeight: '400', wordWrap: 'break-word' }}>Participantes:</div>
             </div>
-            <ul style={{ listStyleType: 'disc', paddingLeft: 20, margin: '10px 0', width: 'fit-content' }}>
+            <ul className="list-disc pl-5 my-2 w-fit">
               {participantes.map((participante, index) => (
-                <li key={index} style={{ color: 'black', fontSize: 16, fontFamily: 'Montserrat', fontWeight: '400', wordWrap: 'break-word' }}>
+                <li
+                  key={index}
+                  className="text-black text-base font-normal font-montserrat break-words"
+                >
                   {participante.nombre}
-                  {participante.dni && <span style={{ color: 'gray-500', marginLeft: 10 }}>{participante.dni}</span>}
-                  {/* Mostrar la información del talle según la actividad */}
-                  {actividad === 1 && ( // Tirolesa
+                  {participante.dni && (
+                    <span className="text-gray-500 ml-2">{participante.dni}</span>
+                  )}
+
+                  {/* Mostrar información del talle según actividad */}
+                  {actividad === 1 && (
                     <>
-                      {participante.tallaArnes && <span style={{ color: 'gray-500', marginLeft: 10 }}>Arnés: {participante.tallaArnes}</span>}
-                      {participante.tallaGuantes && <span style={{ color: 'gray-500', marginLeft: 10 }}>Guantes: {participante.tallaGuantes}</span>}
+                      {participante?.tallaArnes && (
+                        <span className="text-gray-500 ml-2">
+                          Arnés: {participante.tallaArnes}
+                        </span>
+                      )}
+                      {participante?.tallaGuantes && (
+                        <span className="text-gray-500 ml-2">
+                          Guantes: {participante.tallaGuantes}
+                        </span>
+                      )}
                     </>
                   )}
-                  {actividad === 2 && participante.tallaCalzado && ( // Palestra
-                    <span style={{ color: 'gray-500', marginLeft: 10 }}>Calzado: {participante.tallaCalzado}</span>
+
+                  {actividad === 2 && participante.tallaCalzado && (
+                    <span className="text-gray-500 ml-2">
+                      Calzado: {participante.tallaCalzado}
+                    </span>
                   )}
-                  {actividad === 4 && participante.tallaConjunto && ( // Jardinería
-                    <span style={{ color: 'gray-500', marginLeft: 10 }}>Conjunto: {participante.tallaConjunto}</span>
+
+                  {actividad === 4 && participante.tallaConjunto && (
+                    <span className="text-gray-500 ml-2">
+                      Conjunto: {participante.tallaConjunto}
+                    </span>
                   )}
                 </li>
               ))}
+
               {participantes.length === 0 && Number(cantidad) > 0 && (
-                <li style={{ color: 'gray-500', marginTop: 10, listStyleType: 'none', marginLeft: 0 }}>No se ingresaron detalles de los visitantes.</li>
+                <li className="text-gray-500 mt-2 list-none ml-0">
+                  No se ingresaron detalles de los visitantes.
+                </li>
               )}
             </ul>
           </div>
@@ -257,7 +280,7 @@ const Detalle = () => {
             <div style={{ color: '#007bff', fontSize: 16 }}>No se podrán efectuar mas cambios</div>
             <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}> {/* Alinear botones a la derecha */}
               <button onClick={closeModalFinalizar} style={{
-                backgroundColor: '#6c757d',
+                backgroundColor: 'red',
                 color: 'white',
                 padding: '10px 20px',
                 borderRadius: 8,
