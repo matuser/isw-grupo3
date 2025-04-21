@@ -109,7 +109,7 @@ const InscripcionFinalizada = () => {
   // Obtiene el nombre legible de la actividad usando el ID almacenado en 'actividad'.
   const actividadNombre = findActividadNombre(actividad);
   // Formatea la fecha de la actividad para mostrarla en la UI (puede ser diferente al formato API).
-  const fechaFormateadaUI = fecha ? new Date(fecha).toLocaleDateString() : 'No especificada';
+  const fechaFormateadaUI = fecha ? new Date(fecha + 'T12:00:00').toLocaleDateString() : 'No especificada'  ;
   // Construye la URL que se codificará en el QR. Se genera solo cuando inscripcionId tiene valor.
   // IMPORTANTE: Verificar si esta URL debe apuntar a la API directamente o a una ruta del frontend
   // que luego muestre los detalles (ej: `/ver-inscripcion/${inscripcionId}`).
