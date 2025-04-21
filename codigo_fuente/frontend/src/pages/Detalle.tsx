@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Stepper from '../components/Stepper';
 import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
@@ -7,16 +7,33 @@ import { useData } from '../hooks/DataContext';
 
 const Detalle = () => {
   const navigate = useNavigate();
-  const { cantidad, actividad, fecha, hora, participantes, findActividadNombre } = useData(); // Obtenemos la función
+  const { cantidad, actividad, fecha, hora, participantes, findActividadNombre } = useData();
 
-  const actividadNombre = findActividadNombre(actividad); // Usamos la función para obtener el nombre
+  const actividadNombre = findActividadNombre(actividad);
+
+  const [isModalFinalizarOpen, setIsModalFinalizarOpen] = useState(false);
+  const [isModalCancelarOpen, setIsModalCancelarOpen] = useState(false);
+  const [terminosAceptados, setTerminosAceptados] = useState(false);
 
   const handleStepClick = (step: number) => {
     if (step === 1) navigate('/paso1');
     if (step === 2) navigate('/paso2');
   };
 
-  const handleFinalizarInscripcion = () => {
+  const openModalFinalizar = () => {
+    if (terminosAceptados) {
+      setIsModalFinalizarOpen(true);
+    } else {
+      alert('Debes aceptar los términos y condiciones para finalizar la inscripción.');
+    }
+  };
+
+  const closeModalFinalizar = () => {
+    setIsModalFinalizarOpen(false);
+  };
+
+  const handleConfirmFinalizar = () => {
+    closeModalFinalizar();
     console.log('Datos a guardar:', {
       cantidad,
       actividad,
@@ -25,6 +42,23 @@ const Detalle = () => {
       participantes,
     });
     navigate('/inscripcion-finalizada');
+  };
+
+  const openModalCancelar = () => {
+    setIsModalCancelarOpen(true);
+  };
+
+  const closeModalCancelar = () => {
+    setIsModalCancelarOpen(false);
+  };
+
+  const handleConfirmCancelar = () => {
+    closeModalCancelar();
+    navigate('/');
+  };
+
+  const handleTerminosChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTerminosAceptados(event.target.checked);
   };
 
   return (
@@ -104,6 +138,19 @@ const Detalle = () => {
                 <li key={index} style={{ color: 'black', fontSize: 16, fontFamily: 'Montserrat', fontWeight: '400', wordWrap: 'break-word' }}>
                   {participante.nombre}
                   {participante.dni && <span style={{ color: 'gray-500', marginLeft: 10 }}>{participante.dni}</span>}
+                  {/* Mostrar la información del talle según la actividad */}
+                  {actividad === 1 && ( // Tirolesa
+                    <>
+                      {participante.tallaArnes && <span style={{ color: 'gray-500', marginLeft: 10 }}>Arnés: {participante.tallaArnes}</span>}
+                      {participante.tallaGuantes && <span style={{ color: 'gray-500', marginLeft: 10 }}>Guantes: {participante.tallaGuantes}</span>}
+                    </>
+                  )}
+                  {actividad === 2 && participante.tallaCalzado && ( // Palestra
+                    <span style={{ color: 'gray-500', marginLeft: 10 }}>Calzado: {participante.tallaCalzado}</span>
+                  )}
+                  {actividad === 4 && participante.tallaConjunto && ( // Jardinería
+                    <span style={{ color: 'gray-500', marginLeft: 10 }}>Conjunto: {participante.tallaConjunto}</span>
+                  )}
                 </li>
               ))}
               {participantes.length === 0 && Number(cantidad) > 0 && (
@@ -112,12 +159,26 @@ const Detalle = () => {
             </ul>
           </div>
 
+          {/* Checkbox de Términos y Condiciones */}
+          <div style={{ display: 'flex', alignItems: 'center', marginTop: 50, marginBottom: 70 }}>
+            <input
+              type="checkbox"
+              id="terminos"
+              checked={terminosAceptados}
+              onChange={handleTerminosChange}
+              style={{ marginRight: 8, cursor: 'pointer' }}
+            />
+            <label htmlFor="terminos" style={{ color: 'black', fontSize: 14, fontFamily: 'Montserrat', fontWeight: '400', wordWrap: 'break-word', cursor: 'pointer' }}>
+              Acepto los <a href="/terminos-y-condiciones" target="_blank" rel="noopener noreferrer" style={{ color: '#007bff' }}>términos y condiciones</a>
+            </label>
+          </div>
+
           <div style={{
             position: 'relative',
             width: '100%',
-            paddingTop: 30,
+            paddingTop: 10,
           }}>
-            <button onClick={() => navigate(-1)} style={{
+            <button onClick={openModalCancelar} style={{ // Abre el modal de cancelar
               position: 'absolute',
               bottom: 0,
               left: 0,
@@ -135,27 +196,148 @@ const Detalle = () => {
             }}>
               Cancelar
             </button>
-            <button onClick={handleFinalizarInscripcion} style={{
-              position: 'absolute',
-              bottom: 0,
-              right: 0,
-              padding: '8px 16px',
-              background: '#90A955',
-              overflow: 'hidden',
-              borderRadius: 12,
-              color: 'white',
-              fontSize: 16,
-              fontFamily: 'Montserrat',
-              fontWeight: '400',
-              wordWrap: 'break-word',
-              border: 'none',
-              cursor: 'pointer',
-            }}>
+            <button
+              onClick={openModalFinalizar}
+              disabled={!terminosAceptados}
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                right: 0,
+                padding: '8px 16px',
+                background: terminosAceptados ? '#90A955' : '#ccc',
+                overflow: 'hidden',
+                borderRadius: 12,
+                color: 'white',
+                fontSize: 16,
+                fontFamily: 'Montserrat',
+                fontWeight: '400',
+                wordWrap: 'break-word',
+                border: 'none',
+                cursor: terminosAceptados ? 'pointer' : 'not-allowed',
+              }}
+            >
               Finalizar Inscripción
             </button>
           </div>
         </div>
       </main>
+
+      {/* Modal de Finalizar */}
+      {isModalFinalizarOpen && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000,
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            padding: 20,
+            borderRadius: 8,
+            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 15,
+            textAlign: 'center',
+          }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#D91600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 48, height: 48 }}>
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <div style={{ color: '#007bff', fontSize: 18, fontWeight: 'bold' }}>¿Está seguro que desea finalizar la inscripción?</div>
+            <div style={{ color: '#007bff', fontSize: 16 }}>No se podrán efectuar mas cambios</div>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}> {/* Alinear botones a la derecha */}
+              <button onClick={closeModalFinalizar} style={{
+                backgroundColor: '#6c757d',
+                color: 'white',
+                padding: '10px 20px',
+                borderRadius: 8,
+                border: 'none',
+                cursor: 'pointer',
+              }}>
+                Cancelar
+              </button>
+              <button onClick={handleConfirmFinalizar} style={{
+                backgroundColor: '#28a745',
+                color: 'white',
+                padding: '10px 20px',
+                borderRadius: 8,
+                border: 'none',
+                cursor: 'pointer',
+              }}>
+                Aceptar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Cancelar */}
+      {isModalCancelarOpen && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000,
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            padding: 20,
+            borderRadius: 8,
+            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 15,
+            textAlign: 'center',
+          }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#D91600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 48, height: 48 }}>
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <div style={{ color: '#007bff', fontSize: 18, fontWeight: 'bold' }}>¿Está seguro que desea cancelar la inscripción?</div>
+            <div style={{ color: '#007bff', fontSize: 16 }}>No se guardarán los cambios</div>
+            <div style={{ display: 'flex', gap: 10 }}> {/* Alinear botones a la izquierda */}
+              <button onClick={closeModalCancelar} style={{
+                backgroundColor: '#D91600',
+                color: 'white',
+                padding: '10px 20px',
+                borderRadius: 8,
+                border: 'none',
+                cursor: 'pointer',
+              }}>
+                Cancelar
+              </button>
+              <button onClick={handleConfirmCancelar} style={{
+                backgroundColor: '#28a745',
+                color: 'white',
+                padding: '10px 20px',
+                borderRadius: 8,
+                border: 'none',
+                cursor: 'pointer',
+                marginLeft: 'auto', // Empuja el botón a la derecha
+              }}>
+                Aceptar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

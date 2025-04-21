@@ -5,19 +5,26 @@ interface Actividad {
   nombre: string;
 }
 
+// Define la estructura de los datos del participante incluyendo el talle
+interface Participante {
+  nombre: string;
+  dni?: string;
+  talle?: 's' | 'm' | 'l' | 'xl' | 'xxl' | ''; // Agrega la propiedad talle y permite cadena vacía
+}
+
 // Define la estructura de los datos que vas a compartir
 interface DataContextProps {
   cantidad: number;
   actividad: number | '';
   fecha: string;
   hora: string;
-  participantes: { nombre: string; dni: string }[];
+  participantes: Participante[]; // Usa la interfaz Participante actualizada
   actividades: Actividad[];
   setCantidad: (cantidad: number) => void;
   setActividad: (actividad: number | '') => void;
   setFecha: (fecha: string) => void;
   setHora: (hora: string) => void;
-  setParticipantes: (participantes: { nombre: string; dni: string }[]) => void;
+  setParticipantes: (participantes: Participante[]) => void; // Usa la interfaz Participante actualizada
   setActividades: (actividades: Actividad[]) => void;
   findActividadNombre: (id: number | '') => string; // Agregamos la función para obtener el nombre
 }
@@ -31,7 +38,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [actividad, setActividad] = useState<number | ''>('');
   const [fecha, setFecha] = useState<string>('');
   const [hora, setHora] = useState<string>('');
-  const [participantes, setParticipantes] = useState<{ nombre: string; dni: string }[]>([]);
+  const [participantes, setParticipantes] = useState<Participante[]>([]); // Usa la interfaz Participante actualizada
   const [actividades, setActividades] = useState<Actividad[]>([ // Inicializamos con algunas actividades
     { id: 1, nombre: 'Tirolesa' },
     { id: 2, nombre: 'Palestra' },
