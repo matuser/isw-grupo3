@@ -4,9 +4,11 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 
 interface StepperProps {
-  currentStep?: number;
-  onStepClick?: (step: number) => void;
+  currentStep: number;
+  onStepClick: (step: number) => void;
+  Step2Color?: string; // <-- agregalo acá
 }
+
 
 const Stepper: React.FC<StepperProps> = ({ currentStep = 1, onStepClick }) => {
   const steps = [

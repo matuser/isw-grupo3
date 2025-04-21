@@ -8,25 +8,30 @@ interface Actividad {
 // Define la estructura de los datos del participante incluyendo el talle
 interface Participante {
   nombre: string;
-  dni?: string;
-  talle?: 's' | 'm' | 'l' | 'xl' | 'xxl' | '';// Agrega la propiedad talle y permite cadena vacía
+  dni: string;
+  fechaNacimiento: string;
+  tallaArnes?: string;
+  tallaGuantes?: string;
+  tallaCalzado?: string;
+  tallaConjunto?: string;
 }
 
 // Define la estructura de los datos que vas a compartir
+// Datos compartidos en el contexto
 interface DataContextProps {
   cantidad: number;
   actividad: number | '';
   fecha: string;
   hora: string;
-  participantes: { nombre: string; dni: string; fechaNacimiento: string, talle:string }[];
+  participantes: Participante[];
   actividades: Actividad[];
   setCantidad: (cantidad: number) => void;
   setActividad: (actividad: number | '') => void;
   setFecha: (fecha: string) => void;
   setHora: (hora: string) => void;
-  setParticipantes: (participantes: { nombre: string; dni: string; fechaNacimiento: string; talle: string }[]) => void;
+  setParticipantes: (participantes: Participante[]) => void;
   setActividades: (actividades: Actividad[]) => void;
-  findActividadNombre: (id: number | '') => string; // Agregamos la función para obtener el nombre
+  findActividadNombre: (id: number | '') => string;
 }
 
 // Crea el Context con un valor por defecto (puede ser null o un objeto inicial)
@@ -38,7 +43,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [actividad, setActividad] = useState<number | ''>('');
   const [fecha, setFecha] = useState<string>('');
   const [hora, setHora] = useState<string>('');
-  const [participantes, setParticipantes] = useState<{ nombre: string; dni: string; fechaNacimiento: string; talle: string }[]>([]);
+  const [participantes, setParticipantes] = useState<Participante[]>([]);
   const [actividades, setActividades] = useState<Actividad[]>([ // Inicializamos con algunas actividades
     { id: 1, nombre: 'Tirolesa' },
     { id: 2, nombre: 'Palestra' },

@@ -7,31 +7,15 @@ import { useData } from '../hooks/DataContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-interface ParticipanteBase {
+interface Participante {
     nombre: string;
-    dni?: string;
+    dni: string;
     fechaNacimiento: string;
     tallaArnes?: string;
     tallaGuantes?: string;
     tallaCalzado?: string;
     tallaConjunto?: string;
-
-}
-
-interface ParticipanteTirolesa extends ParticipanteBase {
-    tallaArnes?: 's' | 'm' | 'l' | 'xl' | 'xxl' | '';
-    tallaGuantes?: 's' | 'm' | 'l' | 'xl' | 'xxl' | '';
-}
-
-interface ParticipantePalestra extends ParticipanteBase {
-    tallaCalzado: string | ''; // Cambiamos a string para el select
-}
-
-interface ParticipanteJardineria extends ParticipanteBase {
-    tallaConjunto: 's' | 'm' | 'l' | 'xl' | 'xxl' | '';
-}
-
-type Participante = ParticipanteTirolesa | ParticipantePalestra | ParticipanteJardineria;
+  }
 
 interface FormData {
     participantes: Participante[];
@@ -47,6 +31,32 @@ const Paso2 = () => {
 
     console.log("Actividad seleccionada en Paso 2:", actividadSeleccionada); // ➡️ Para depuración
 
+
+    const generateParticipantes = (cantidad: number, actividadId: number) => {
+        const baseData = {
+            nombre: '',
+            dni: '',
+            fechaNacimiento: '',
+        };
+    
+        switch (actividadId) {
+            case 1:
+                Object.assign(baseData, { tallaArnes: '', tallaGuantes: '' });
+                break;
+            case 2:
+                Object.assign(baseData, { tallaCalzado: '' });
+                break;
+            case 4:
+                Object.assign(baseData, { tallaConjunto: '' });
+                break;
+            default:
+                break;
+        }
+    
+        return Array.from({ length: cantidad }, () => ({ ...baseData }));
+    };
+    
+
     const {
         handleSubmit,
         register,
@@ -55,15 +65,9 @@ const Paso2 = () => {
     } = useForm<FormData>({
         mode: 'onChange',
         defaultValues: {
-            participantes: Array.from({ length: cantidadParticipantes }, () => ({
-                nombre: '',
-                dni: '',
-                fechaNacimiento: '',
-                ...(actividadSeleccionada === 1 && { tallaArnes: '', tallaGuantes: '' }), // Tirolesa (ID: 1)
-                ...(actividadSeleccionada === 2 && { tallaCalzado: '' }), // Palestra (ID: 2)
-                ...(actividadSeleccionada === 4 && { tallaConjunto: '' }), // Jardinería (ID: 4)
-            })),
+            participantes: generateParticipantes(cantidadParticipantes, actividadSeleccionada),
         },
+    
     });
 
     const { fields, append, remove } = useFieldArray({
@@ -132,7 +136,7 @@ const Paso2 = () => {
         if (step === 1) navigate('/paso1');
     };
 
-    const onSubmit: SubmitHandler<FormData> = (data) => {
+    const onSubmit = (data: FormData) => {
         setParticipantes(data.participantes);
         navigate('/detalle');
     };
@@ -156,11 +160,11 @@ const Paso2 = () => {
                                 style={{ ...commonInputStyle, borderColor: errors.participantes?.[index]?.tallaArnes ? 'red' : '#ccc' }}
                             >
                                 <option value="">Seleccione...</option>
-                                <option value="s">S</option>
-                                <option value="m">M</option>
-                                <option value="l">L</option>
-                                <option value="xl">XL</option>
-                                <option value="xxl">XXL</option>
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                                <option value="XXL">XXL</option>
                             </select>
                             {errors.participantes?.[index]?.tallaArnes && <p style={errorStyle}>{errors.participantes[index].tallaArnes.message}</p>}
                         </div>
@@ -172,11 +176,11 @@ const Paso2 = () => {
                                 style={{ ...commonInputStyle, borderColor: errors.participantes?.[index]?.tallaGuantes ? 'red' : '#ccc' }}
                             >
                                 <option value="">Seleccione...</option>
-                                <option value="s">S</option>
-                                <option value="m">M</option>
-                                <option value="l">L</option>
-                                <option value="xl">XL</option>
-                                <option value="xxl">XXL</option>
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                                <option value="XXL">XXL</option>
                             </select>
                             {errors.participantes?.[index]?.tallaGuantes && <p style={errorStyle}>{errors.participantes[index].tallaGuantes.message}</p>}
                         </div>
@@ -209,11 +213,11 @@ const Paso2 = () => {
                             style={{ ...commonInputStyle, borderColor: errors.participantes?.[index]?.tallaConjunto ? 'red' : '#ccc' }}
                         >
                             <option value="">Seleccione...</option>
-                            <option value="s">S</option>
-                            <option value="m">M</option>
-                            <option value="l">L</option>
-                            <option value="xl">XL</option>
-                            <option value="xxl">XXL</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="XXL">XXL</option>
                         </select>
                         {errors.participantes?.[index]?.tallaConjunto && <p style={errorStyle}>{errors.participantes[index].tallaConjunto.message}</p>}
                     </div>

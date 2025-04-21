@@ -129,59 +129,92 @@ const Detalle = () => {
           </div>
 
           {/* Datos de los visitantes */}
-          <div style={{ width: '100%', paddingTop: 15, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '5px 0', width: '100%', justifyContent: 'center' }}>
+          <div
+            style={{
+              width: '100%',
+              color: "black",
+              paddingTop: 15,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center'
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                padding: '5px 0',
+                width: '100%',
+                justifyContent: 'center',
+              }}
+            >
               <FiUser size={18} color="black" />
-              <div style={{ color: 'black', fontSize: 18, fontFamily: 'Montserrat', fontWeight: '400', wordWrap: 'break-word' }}>Participantes:</div>
+              <div
+                style={{
+                  color: 'black',
+                  fontSize: 18,
+                  fontFamily: 'Montserrat',
+                  fontWeight: '400',
+                  wordWrap: 'break-word',
+                }}
+              >
+                Participantes:
+              </div>
             </div>
+
             <ul className="list-disc pl-5 my-2 w-fit">
               {participantes.map((participante, index) => (
-                <li
-                  key={index}
-                  className="text-black text-base font-normal font-montserrat break-words"
-                >
-                  {participante.nombre}
+                <li key={index} className="text-black text-base font-normal font-montserrat break-words mb-4">
+                  {participante.nombre && (
+                    <span className="text-black-500 mb-1" style={{ marginRight: '10px' }}>
+                      <strong>Nombre:</strong> {participante.nombre}
+                    </span>
+                  )}
                   {participante.dni && (
-                    <span className="text-gray-500 ml-2">{participante.dni}</span>
+                    <span className="text-black-500 mb-1" style={{ marginRight: '10px' }}>
+                      <strong>DNI:</strong> {participante.dni}
+                    </span>
                   )}
 
-                  {/* Mostrar información del talle según actividad */}
                   {actividad === 1 && (
                     <>
                       {participante?.tallaArnes && (
-                        <span className="text-gray-500 ml-2">
-                          Arnés: {participante.tallaArnes}
+                        <span className="text-black-500 mb-1" style={{ marginRight: '10px' }}>
+                          <strong>Arnés:</strong> {participante.tallaArnes}
                         </span>
                       )}
                       {participante?.tallaGuantes && (
-                        <span className="text-gray-500 ml-2">
-                          Guantes: {participante.tallaGuantes}
+                        <span className="text-black-500 mb-1" style={{ marginRight: '10px' }}>
+                          <strong>Guantes:</strong> {participante.tallaGuantes}
                         </span>
                       )}
                     </>
                   )}
 
                   {actividad === 2 && participante.tallaCalzado && (
-                    <span className="text-gray-500 ml-2">
-                      Calzado: {participante.tallaCalzado}
+                    <span className="text-black-500 mb-1" style={{ marginRight: '10px' }}>
+                      <strong>Calzado:</strong> {participante.tallaCalzado}
                     </span>
                   )}
 
                   {actividad === 4 && participante.tallaConjunto && (
-                    <span className="text-gray-500 ml-2">
-                      Conjunto: {participante.tallaConjunto}
+                    <span className="text-black-500 block mb-1">
+                      <strong>Conjunto:</strong> {participante.tallaConjunto}
                     </span>
                   )}
                 </li>
               ))}
 
               {participantes.length === 0 && Number(cantidad) > 0 && (
-                <li className="text-gray-500 mt-2 list-none ml-0">
+                <li className="text-black-500 mt-2 list-none ml-0">
                   No se ingresaron detalles de los visitantes.
                 </li>
               )}
             </ul>
           </div>
+
+
 
           {/* Checkbox de Términos y Condiciones */}
           <div style={{ display: 'flex', alignItems: 'center', marginTop: 50, marginBottom: 70 }}>
