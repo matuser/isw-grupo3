@@ -38,7 +38,7 @@ class HorarioActividadService {
   async findFechasDisponibles(idActividad, cantidadPersonas) {
     const today = new Date();
     const maxDate = new Date();
-    maxDate.setDate(today.getDate() + 60);
+    maxDate.setDate(today.getDate() + 30);
   
     const horarios = await models.HorarioActividad.findAll({
       where: {
