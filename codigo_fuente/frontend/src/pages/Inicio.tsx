@@ -1,6 +1,8 @@
+import React from 'react';
 import logo from '../assets/logo.png';
 import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
+import styles from '../styles/Inicio.module.css';
 
 const Inicio = () => {
   const navigate = useNavigate();
@@ -10,62 +12,27 @@ const Inicio = () => {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      backgroundColor: 'white',
-    }}>
+    <div className={styles.container}>
       {/* Navbar */}
       <Navbar />
 
       {/* Main Content */}
-      <main style={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 24,
-        textAlign: 'center',
-      }}>
+      <main className={styles.main}>
         {/* Logo grande */}
-        <img src={logo} alt="Logo grande" style={{ width: 'clamp(120px, 20vw, 300px)', height: 'auto' }} />
+        <img src={logo} alt="Logo grande" className={styles.logo} />
 
         {/* Título */}
-        <h1 style={{
-          fontSize: 'clamp(24px, 5vw, 40px)',
-          fontFamily: 'Montserrat',
-          margin: 0,
-          color: '#90A955'
-        }}>
+        <h1 className={styles.title}>
           ¡Bienvenido a EcoHarmonyPark!
         </h1>
 
         {/* Subtítulo */}
-        <p style={{
-          fontSize: 'clamp(16px, 2vw, 20px)',
-          fontFamily: 'Montserrat',
-          margin: '16px 0',
-          color: '#90A955'
-        }}>
+        <p className={styles.subtitle}>
           Haga clic en el siguiente botón y disfrute de nuestras actividades
         </p>
 
         {/* Botón */}
-        <button
-          onClick={handleClick}
-          style={{
-            padding: '12px 24px',
-            fontSize: 18,
-            fontFamily: 'Montserrat',
-            backgroundColor: '#90A955',
-            color: 'white',
-            border: 'none',
-            borderRadius: 12,
-            cursor: 'pointer'
-          }}
-        >
+        <button onClick={handleClick} className={styles.button}>
           Inscribirse a actividad
         </button>
       </main>

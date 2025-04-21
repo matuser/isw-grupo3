@@ -1,0 +1,46 @@
+.container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+  }
+  
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    text-align: center;
+  }
+  
+  .logo {
+    width: clamp(120px, 20vw, 300px);
+    height: auto;
+  }
+  
+  .title {
+    font-size: clamp(24px, 5vw, 40px);
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    color: #90A955;
+  }
+  
+  .subtitle {
+    font-size: clamp(16px, 2vw, 20px);
+    font-family: 'Montserrat', sans-serif;
+    margin: 16px 0;
+    color: #90A955;
+  }
+  
+  .button {
+    padding: 12px 24px;
+    font-size: 18px;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #90A955;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+  }

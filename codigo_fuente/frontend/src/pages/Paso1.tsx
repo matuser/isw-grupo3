@@ -8,7 +8,7 @@ import { getFechasDisponibles, getHorariosDisponiblesPorFecha } from '../service
 import { parseISO, format } from 'date-fns';
 import { FaUser } from 'react-icons/fa';
 import { useLocation } from 'react-router-dom';
-
+import styles from '../styles/Paso1.module.css';
 
 const Paso1 = () => {
   const navigate = useNavigate();
@@ -77,9 +77,6 @@ const Paso1 = () => {
     setErrors((prev) => ({ ...prev, [field]: false }));
   };
 
-  
-
-  // Mantener sincronización si cambia el contexto
   useEffect(() => {
     setActividadLocal(actividadCtx || '');
     setCantidadLocal(cantidadCtx || 1);
@@ -148,156 +145,129 @@ const Paso1 = () => {
   }, [location.state]);
 
   return (
-    <div style={containerStyle}>
+    <div className={styles.container}>
       <Navbar />
-      <div style={stepperContainerStyle}>
-        <div style={{ width: 'fit-content' }}>
+      <div className={styles.stepperContainer}>
+        <div className={styles.stepperWrapper}>
           <Stepper currentStep={1} onStepClick={handleStepClick} />
         </div>
       </div>
-      <main style={mainStyle}>
-        <div style={cardStyle}>
-          <h2 style={titleStyle}>Completar los siguientes datos para avanzar en su inscripción</h2>
+      <main className={styles.main}>
+        <div className={styles.card}>
+          <h2 className={styles.title}>Completar los siguientes datos para avanzar en su inscripción</h2>
 
-          <div style={rowStyle}>
-          <div style={fieldContainerStyle}>
-            <label htmlFor="actividad" style={labelStyle}>Actividad</label>
-            <select
-              id="actividad"
-              value={actividad}
-              onChange={(e) => handleInputChange(e, 'actividad')}
-              style={{ ...selectStyle, borderColor: errors.actividad ? 'red' : '#ccc' }}
-            >
-              <option value="">Seleccione...</option>
-              {actividades.map((act) => (
-                <option key={act.id} value={act.id}>{act.nombre}</option>
-              ))}
-            </select>
-            <p style={helperTextStyle}>Seleccione una actividad de las disponibles</p>
-            {errors.actividad && <p style={errorStyle}>Campo obligatorio</p>}
-          </div>
-
-
-          <div style={fieldContainerStyle}>
-            <label htmlFor="cantidad" style={labelStyle}>Cantidad de visitantes</label>
-            <div style={quantityWrapperStyle}>
-              <button
-                type="button"
-                onClick={() => setCantidadLocal((prev) => Math.max(Number(prev) - 1, 1))}
-                style={quantityButtonStyle}
-              >−</button>
-              <div style={quantityInputContainerStyle}>
-              <input
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                value={cantidad === 0 ? '' : cantidad.toString()}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  const value = e.target.value;
-
-                  if (/^\d{0,2}$/.test(value)) {
-                    if (value === '') {
-                      setCantidadLocal(0); // temporal mientras escribe
-                    } else {
-                      const parsed = Number(value);
-                      if (parsed >= 1 && parsed <= 10) {
-                        setCantidadLocal(parsed);
-                        setErrors((prev) => ({ ...prev, cantidad: false }));
-                      }
-                    }
-                  }
-                }}
-                onBlur={() => {
-                  if (cantidad < 1) {
-                    setCantidadLocal(1);
-                  }
-                }}
-                style={{
-                  ...quantityValueStyle,
-                  border: 'none',
-                  width: 50,
-                  textAlign: 'center',
-                  backgroundColor: 'transparent',
-                  fontSize: 16,
-                  fontFamily: 'Montserrat',
-                  outline: 'none',
-                  appearance: 'textfield',
-                  WebkitAppearance: 'textfield',
-                  MozAppearance: 'textfield',
-                }}
-              />
-
-                <FaUser style={{ marginLeft: 8, color: '#aaa' }} />
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setCantidadLocal((prev) => Math.min(Number(prev) + 1, 10))}
-                style={quantityButtonStyle}
-              >+</button>
+          <div className={styles.row}>
+            <div className={styles.fieldContainer}>
+              <label htmlFor="actividad" className={styles.label}>Actividad</label>
+              <select
+                id="actividad"
+                value={actividad}
+                onChange={(e) => handleInputChange(e, 'actividad')}
+                className={`${styles.select} ${errors.actividad ? styles.errorBorder : ''}`}
+              >
+                <option value="">Seleccione...</option>
+                {actividades.map((act) => (
+                  <option key={act.id} value={act.id}>{act.nombre}</option>
+                ))}
+              </select>
+              <p className={styles.helperText}>Seleccione una actividad de las disponibles</p>
+              {errors.actividad && <p className={styles.error}>Campo obligatorio</p>}
             </div>
-            <p style={helperTextStyle}>Seleccione la cantidad de personas a inscribir</p>
-            {errors.cantidad && <p style={errorStyle}>Indique cuántas personas participarán</p>}
-          </div>
+
+            <div className={styles.fieldContainer}>
+              <label htmlFor="cantidad" className={styles.label}>Cantidad de visitantes</label>
+              <div className={styles.quantityWrapper}>
+                <button
+                  type="button"
+                  onClick={() => setCantidadLocal((prev) => Math.max(Number(prev) - 1, 1))}
+                  className={styles.quantityButton}
+                >−</button>
+                <div className={styles.quantityInputContainer}>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={cantidad === 0 ? '' : cantidad.toString()}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      const value = e.target.value;
+
+                      if (/^\d{0,2}$/.test(value)) {
+                        if (value === '') {
+                          setCantidadLocal(0);
+                        } else {
+                          const parsed = Number(value);
+                          if (parsed >= 1 && parsed <= 10) {
+                            setCantidadLocal(parsed);
+                            setErrors((prev) => ({ ...prev, cantidad: false }));
+                          }
+                        }
+                      }
+                    }}
+                    onBlur={() => {
+                      if (cantidad < 1) {
+                        setCantidadLocal(1);
+                      }
+                    }}
+                    className={styles.quantityValue}
+                  />
+                  <FaUser className={styles.userIcon} />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setCantidadLocal((prev) => Math.min(Number(prev) + 1, 10))}
+                  className={styles.quantityButton}
+                >+</button>
+              </div>
+              <p className={styles.helperText}>Seleccione la cantidad de personas a inscribir</p>
+              {errors.cantidad && <p className={styles.error}>Indique cuántas personas participarán</p>}
+            </div>
           </div>
 
-          <div style={rowStyle}>
-          <div style={fieldContainerStyle}>
-            <label htmlFor="fecha" style={labelStyle}>Fecha</label>
-            <select
-              id="fecha"
-              value={fecha}
-              onChange={(e) => handleInputChange(e, 'fecha')}
-              style={{
-                ...selectStyle,
-                opacity: isFechaHoraEnabled ? 1 : 0.5,
-                borderColor: errors.fecha ? 'red' : '#ccc',
-              }}
-              disabled={!isFechaHoraEnabled}
-            >
-              <option value="">Seleccione...</option>
-              {fechasDisponibles.map((f) => (
-                <option key={f} value={f}>{format(parseISO(f), 'dd/MM/yyyy')}</option>
-              ))}
-            </select>
-            <p style={helperTextStyle}>Seleccione la fecha de la actividad</p>
-            {errors.fecha && <p style={errorStyle}>Campo obligatorio</p>}
+          <div className={styles.row}>
+            <div className={styles.fieldContainer}>
+              <label htmlFor="fecha" className={styles.label}>Fecha</label>
+              <select
+                id="fecha"
+                value={fecha}
+                onChange={(e) => handleInputChange(e, 'fecha')}
+                className={`${styles.select} ${errors.fecha ? styles.errorBorder : ''}`}
+                disabled={!isFechaHoraEnabled}
+                style={{ opacity: isFechaHoraEnabled ? 1 : 0.5 }}
+              >
+                <option value="">Seleccione...</option>
+                {fechasDisponibles.map((f) => (
+                  <option key={f} value={f}>{format(parseISO(f), 'dd/MM/yyyy')}</option>
+                ))}
+              </select>
+              <p className={styles.helperText}>Seleccione la fecha de la actividad</p>
+              {errors.fecha && <p className={styles.error}>Campo obligatorio</p>}
+            </div>
+
+            <div className={styles.fieldContainer}>
+              <label htmlFor="hora" className={styles.label}>Hora</label>
+              <select
+                id="hora"
+                value={hora}
+                onChange={(e) => handleInputChange(e, 'hora')}
+                className={`${styles.select} ${errors.hora ? styles.errorBorder : ''}`}
+                disabled={!isFechaHoraEnabled}
+                style={{ opacity: isFechaHoraEnabled ? 1 : 0.5 }}
+              >
+                <option value="">Seleccione...</option>
+                {horariosFiltrados.map((h) => (
+                  <option key={h.id} value={h.hora_inicio}>{h.hora_inicio.slice(0, 5)} hs</option>
+                ))}
+              </select>
+              <p className={styles.helperText}>Seleccione un horario de las disponibles</p>
+              {errors.hora && <p className={styles.error}>Campo obligatorio</p>}
+            </div>
           </div>
 
-
-          <div style={fieldContainerStyle}>
-            <label htmlFor="hora" style={labelStyle}>Hora</label>
-            <select
-              id="hora"
-              value={hora}
-              onChange={(e) => handleInputChange(e, 'hora')}
-              style={{
-                ...selectStyle,
-                opacity: isFechaHoraEnabled ? 1 : 0.5,
-                borderColor: errors.hora ? 'red' : '#ccc',
-              }}
-              disabled={!isFechaHoraEnabled}
-            >
-              <option value="">Seleccione...</option>
-              {horariosFiltrados.map((h) => (
-                <option key={h.id} value={h.hora_inicio}>{h.hora_inicio.slice(0, 5)} hs</option>
-              ))}
-            </select>
-            <p style={helperTextStyle}>Seleccione un horario de las disponibles</p>
-            {errors.hora && <p style={errorStyle}>Campo obligatorio</p>}
-          </div>
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 0 }}>
-            <button onClick={() => navigate('/')} style={buttonBackStyle}>Volver</button>
+          <div className={styles.buttonGroup}>
+            <button onClick={() => navigate('/')} className={styles.buttonBack}>Volver</button>
             <button
               onClick={handleNext}
-              style={{
-                ...buttonNextStyle,
-                backgroundColor: formularioValido ? '#90A955' : '#ccc',
-                color: formularioValido ? 'black' : 'white',
-                cursor: formularioValido ? 'pointer' : 'default',
-              }}
+              className={formularioValido ? styles.buttonNextEnabled : styles.buttonNextDisabled}
               disabled={!formularioValido}
             >Siguiente</button>
           </div>
@@ -305,159 +275,6 @@ const Paso1 = () => {
       </main>
     </div>
   );
-};
-
-const containerStyle = {
-  minHeight: '100vh',
-  display: 'flex',
-  flexDirection: 'column' as const,
-  backgroundColor: 'white',
-  alignItems: 'center',
-};
-
-const stepperContainerStyle = {
-  width: '100%',
-  display: 'flex',
-  justifyContent: 'center',
-  padding: '24px 0',
-};
-
-const mainStyle = {
-  flex: 1,
-  display: 'flex',
-  flexDirection: 'column' as const,
-  alignItems: 'center',
-  padding: 24,
-  width: '100%',
-};
-
-const cardStyle = {
-  width: 'clamp(300px, 80vw, 768px)',
-  padding: 20,
-  background: 'white',
-  boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
-  borderRadius: 12,
-  display: 'flex',
-  flexDirection: 'column' as const,
-  gap: 20,
-};
-
-const rowStyle = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  gap: 20,
-};
-
-const fieldContainerStyle = {
-  flex: 1,
-  display: 'flex',
-  flexDirection: 'column' as const,
-};
-
-const labelStyle = {
-  fontFamily: 'Montserrat',
-  fontSize: 16,
-  marginBottom: 8,
-  textAlign: 'left' as const,
-  color: '#90A955', // ✅ color igual al del título
-};
-
-
-const selectStyle = {
-  width: '100%',
-  padding: 10,
-  borderRadius: 8,
-  border: '1px solid #ccc',
-  fontFamily: 'Montserrat',
-  fontSize: 16,
-  boxSizing: 'border-box' as const,
-  backgroundColor: 'white', // Fondo blanco
-  color: 'black',           // Texto negro
-};
-
-const titleStyle = {
-  fontFamily: 'Montserrat',
-  fontWeight: 500,
-  fontSize: 24,
-  color: '#90A955',
-  textAlign: 'center' as const,
-};
-
-
-const errorStyle = {
-  color: 'red',
-  fontSize: 12,
-};
-
-const buttonNextStyle = {
-  padding: '12px 24px',
-  backgroundColor: '#ccc',
-  color: 'white',
-  fontFamily: 'Montserrat',
-  fontSize: 16,
-  border: 'none',
-  borderRadius: 8,
-  cursor: 'pointer',
-};
-
-const buttonBackStyle = {
-  padding: '12px 24px',
-  backgroundColor: '#90A955',
-  color: 'black',
-  fontFamily: 'Montserrat',
-  fontSize: 16,
-  border: 'none',
-  borderRadius: 8,
-  cursor: 'pointer',
-};
-
-
-const helperTextStyle = {
-  fontSize: 12,
-  color: '#31572C',
-  marginTop: 4,
-};
-
-
-const quantityWrapperStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  width: '100%',
-  gap: 8,
-};
-
-const quantityButtonStyle = {
-  width: 40,
-  height: 40,
-  borderRadius: 6,
-  border: '1px solid #ccc',
-  backgroundColor: 'white',
-  fontSize: 20,
-  fontWeight: 'bold',
-  color: '#666',
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: 0,
-};
-
-const quantityInputContainerStyle = {
-  flex: 1,
-  height: 40,
-  border: '1px solid #ccc',
-  borderRadius: 6,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  backgroundColor: '#f9f9f9',
-  fontFamily: 'Montserrat',
-  fontSize: 16,
-};
-
-const quantityValueStyle = {
-  fontSize: 16,
-  color: '#333',
 };
 
 export default Paso1;
