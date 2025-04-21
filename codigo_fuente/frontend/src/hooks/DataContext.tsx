@@ -5,6 +5,13 @@ interface Actividad {
   nombre: string;
 }
 
+// Define la estructura de los datos del participante incluyendo el talle
+interface Participante {
+  nombre: string;
+  dni?: string;
+  talle?: 's' | 'm' | 'l' | 'xl' | 'xxl' | ''; // Agrega la propiedad talle y permite cadena vacía
+}
+
 // Define la estructura de los datos que vas a compartir
 interface DataContextProps {
   cantidad: number;
