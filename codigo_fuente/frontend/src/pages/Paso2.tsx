@@ -24,7 +24,7 @@ interface FormData {
 
 const Paso2 = () => {
     const navigate = useNavigate();
-    const { cantidad, actividad, setParticipantes } = useData();
+    const { cantidad, actividad, setParticipantes, participantes } = useData();
     const cantidadParticipantes = Number(cantidad) || 0;
     const actividadSeleccionada = Number(actividad);
     const [actividadNombre, setActividadNombre] = useState('');
@@ -63,8 +63,11 @@ const Paso2 = () => {
     } = useForm<FormData>({
         mode: 'onChange',
         defaultValues: {
-            participantes: generateParticipantes(cantidadParticipantes, actividadSeleccionada),
-        },
+          participantes: participantes.length
+            ? participantes // <-- datos guardados en el contexto
+            : generateParticipantes(cantidadParticipantes, actividadSeleccionada),
+        }
+        
 
     });
 
@@ -130,9 +133,13 @@ const Paso2 = () => {
               break;
       }
   }, [actividadSeleccionada]);
-    const handleStepClick = (step: number) => {
-        if (step === 1) navigate('/paso1');
-    };
+  const handleStepClick = (step: number) => {
+    if (step === 1) {
+      const currentValues = control._formValues.participantes;
+      setParticipantes(currentValues);
+      navigate('/paso1', { state: { desde: true } });
+    }
+  };
 
     const onSubmit = (data: FormData) => {
         setParticipantes(data.participantes);
@@ -259,8 +266,10 @@ const Paso2 = () => {
                           placeholder="Ingrese su nombre"
                           {...register(`participantes.${index}.nombre`, {
                             required: 'El nombre es obligatorio',
-                            pattern: { value: /^[A-Za-z\s]+$/i, message: 'Solo se permiten letras' },
-                            minLength: { value: 3, message: 'El nombre debe tener al menos 3 caracteres' },
+                            pattern: {
+                              value: /^[A-Za-zÀ-ÿÑñ]{3,}\s[A-Za-zÀ-ÿÑñ]{2,}$/,
+                              message: 'Debe ingresar nombre y apellido (ej. Juan Pérez)',
+                            },
                           })}
                           className={`${styles.commonInput} ${errors?.participantes?.[index]?.nombre ? styles.errorBorder : ''}`}
                         />

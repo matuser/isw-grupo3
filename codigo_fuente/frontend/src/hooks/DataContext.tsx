@@ -23,12 +23,14 @@ interface DataContextProps {
   actividad: number | '';
   fecha: string;
   hora: string;
+  idHorario: number | undefined;
   participantes: Participante[];
   actividades: Actividad[];
   setCantidad: (cantidad: number) => void;
   setActividad: (actividad: number | '') => void;
   setFecha: (fecha: string) => void;
   setHora: (hora: string) => void;
+  setIdHorario: (idHorario: number | undefined) => void;
   setParticipantes: (participantes: Participante[]) => void;
   setActividades: (actividades: Actividad[]) => void;
   findActividadNombre: (id: number | '') => string;
@@ -43,6 +45,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [actividad, setActividad] = useState<number | ''>('');
   const [fecha, setFecha] = useState<string>('');
   const [hora, setHora] = useState<string>('');
+  const [idHorario, setIdHorario] = useState<number | undefined>(undefined);
   const [participantes, setParticipantes] = useState<Participante[]>([]);
   const [actividades, setActividades] = useState<Actividad[]>([ // Inicializamos con algunas actividades
     { id: 1, nombre: 'Tirolesa' },
@@ -69,6 +72,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       fecha,
       setFecha,
       hora,
+      idHorario,
+      setIdHorario,
       setHora,
       participantes,
       setParticipantes,

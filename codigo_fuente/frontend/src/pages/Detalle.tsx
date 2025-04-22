@@ -17,9 +17,16 @@ const Detalle = () => {
   const [terminosAceptados, setTerminosAceptados] = useState(false);
 
   const handleStepClick = (step: number) => {
-    if (step === 1) navigate('/paso1');
-    if (step === 2) navigate('/paso2');
+    if (step === 1) {
+      navigate('/paso1', { state: { desde: true } });
+    }
+  
+    if (step === 2) {
+      // Recuperar los datos guardados en el contexto y volver al paso 2
+      navigate('/paso2', { state: { desde: true } });
+    }
   };
+  
 
   const openModalFinalizar = () => {
     if (terminosAceptados) {

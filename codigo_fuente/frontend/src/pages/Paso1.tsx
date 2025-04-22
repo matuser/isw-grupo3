@@ -17,16 +17,19 @@ const Paso1 = () => {
     actividad: actividadCtx,
     fecha: fechaCtx,
     hora: horaCtx,
+    idHorario,
     setCantidad,
     setActividad,
     setFecha,
     setHora,
+    setIdHorario
   } = useData();
 
   const [actividad, setActividadLocal] = useState<number | ''>(actividadCtx || '');
   const [cantidad, setCantidadLocal] = useState<number>(cantidadCtx || 1);
   const [fecha, setFechaLocal] = useState(fechaCtx || '');
   const [hora, setHoraLocal] = useState(horaCtx || '');
+  const [idHorarioLocal, setIdHorarioLocal] = useState<number | ''>(idHorario || '');
 
   const [actividades, setActividades] = useState<any[]>([]);
   const [horariosFiltrados, setHorariosFiltrados] = useState<any[]>([]);
@@ -72,8 +75,15 @@ const Paso1 = () => {
       setCantidadLocal(parsed > 0 ? parsed : 1);
     }
     if (field === 'fecha') setFechaLocal(value);
-    if (field === 'hora') setHoraLocal(value);
-
+    if (field === 'hora') {
+      const id = Number(value);
+      setIdHorarioLocal(id);
+      setIdHorario(id); // contexto
+      const horarioSeleccionado = horariosFiltrados.find((h) => h.id === id);
+      setHoraLocal(horarioSeleccionado?.hora_inicio || '');
+    }
+    
+  
     setErrors((prev) => ({ ...prev, [field]: false }));
   };
 
@@ -247,7 +257,7 @@ const Paso1 = () => {
               <label htmlFor="hora" className={styles.label}>Hora</label>
               <select
                 id="hora"
-                value={hora}
+                value={idHorarioLocal}
                 onChange={(e) => handleInputChange(e, 'hora')}
                 className={`${styles.select} ${errors.hora ? styles.errorBorder : ''}`}
                 disabled={!isFechaHoraEnabled}
@@ -255,7 +265,7 @@ const Paso1 = () => {
               >
                 <option value="">Seleccione...</option>
                 {horariosFiltrados.map((h) => (
-                  <option key={h.id} value={h.hora_inicio}>{h.hora_inicio.slice(0, 5)} hs</option>
+                <option key={h.id} value={h.id}>{h.hora_inicio.slice(0, 5)} hs</option>
                 ))}
               </select>
               <p className={styles.helperText}>Seleccione un horario de las disponibles</p>

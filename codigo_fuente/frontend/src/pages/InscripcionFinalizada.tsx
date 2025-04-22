@@ -62,14 +62,14 @@ const formatDNI = (dni: string | null | undefined): string => {
 
 const InscripcionFinalizada = () => {
   const navigate = useNavigate();
-  const { cantidad, actividad, fecha, hora, participantes, findActividadNombre } = useData();
+  const { cantidad, actividad, fecha, hora, idHorario, participantes, findActividadNombre } = useData();
   const [inscripcionId, setInscripcionId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState<boolean>(true);
 
   const actividadNombre = findActividadNombre(actividad);
   const fechaFormateadaUI = fecha ? new Date(fecha + 'T12:00:00').toLocaleDateString() : 'No especificada';
-  const backendInscripcionUrl = inscripcionId ? `/api/v1/inscripciones/${inscripcionId}` : '';
+  const backendInscripcionUrl = inscripcionId ? `localhost:3000/api/v1/inscripciones/${inscripcionId}` : '';
 
   const handleStepClick = (step: number) => {
     if (step === 1) navigate('/paso1', { state: { desde: true } });
@@ -103,7 +103,7 @@ const InscripcionFinalizada = () => {
 
       try {
         const datosInscripcion = {
-          id_horario: Number(actividad),
+          id_horario: Number(idHorario), // ACA ESTA EL PROBLEMA, SOLUCIONENLO QUE Marcos Pomenichiii <3 u.u SE ME PONE MAL
           cantidad_personas: Number(cantidad),
           fecha_inscripcion: fechaActualFormateadaAPI,
         };
@@ -126,7 +126,7 @@ const InscripcionFinalizada = () => {
 
           const promesasParticipantes = participantes.map(participante => {
             const edadCalculada = calcularEdad(participante.fechaNacimiento);
-            const talleParticipante = participante.talle || undefined;
+            const talleParticipante = participante.tallaArnes || undefined;
 
             console.log(`Datos para API participante ${participante.nombre}: DNI=${participante.dni}, Edad=${edadCalculada}, Talle=${talleParticipante}`);
 
