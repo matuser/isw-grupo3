@@ -3,7 +3,7 @@ const { Op } = require('sequelize');
 const { models } = require('../libs/sequelize');
 
 class HorarioActividadService {
-  constructor() {}
+  constructor() { }
 
   async create(data) {
     const newHorario = await models.HorarioActividad.create(data);
@@ -14,32 +14,36 @@ class HorarioActividadService {
     const today = new Date();
     const maxDate = new Date();
     maxDate.setDate(today.getDate() + 60);
-  
+
     const where = {
       fecha: {
         [Op.between]: [today, maxDate]
       }
     };
-  
+
     if (cantidadPersonas) {
       where.cupo_disponible = {
         [Op.gte]: cantidadPersonas
       };
     }
-  
+
     const horarios = await models.HorarioActividad.findAll({
       where,
       include: ['actividad']
     });
-  
+
     return horarios;
   }
 
   async findFechasDisponibles(idActividad, cantidadPersonas) {
-    const today = new Date();
+    const now = new Date();
+    const todayStr = now.toLocaleDateString('sv-SE'); // ← usa hora local
+    const horaActual = now.toTimeString().slice(0, 5); // 'HH:mm'
+
     const maxDate = new Date();
-    maxDate.setDate(today.getDate() + 30);
-  
+    maxDate.setDate(now.getDate() + 30);
+    const maxDateStr = maxDate.toLocaleDateString('sv-SE');
+
     const horarios = await models.HorarioActividad.findAll({
       where: {
         id_actividad: idActividad,
@@ -47,44 +51,33 @@ class HorarioActividadService {
           [Op.gte]: cantidadPersonas
         },
         fecha: {
-          [Op.between]: [today, maxDate]
+          [Op.between]: [todayStr, maxDateStr]
         }
       },
       raw: true
     });
-  
-    // Fecha de hoy en formato YYYY-MM-DD
-    const fechaHoyStr = today.toISOString().split('T')[0];
-  
-    // Hora actual redondeada a la siguiente hora en punto
-    const ahora = new Date();
-    ahora.setHours(ahora.getHours() + 1, 0, 0, 0);
-    const horaActualRedondeada = ahora.toTimeString().slice(0, 5); // "HH:mm"
-  
-    // Acá vamos a filtrar y agrupar las fechas válidas
-    const fechasMap = new Map();
-  
+
+    const fechasSet = new Set();
+
     for (const h of horarios) {
-      const fecha = typeof h.fecha === 'string'
-        ? h.fecha
-        : h.fecha.toISOString().split('T')[0]; // por si acaso
-  
-      if (fecha === fechaHoyStr) {
-        if (h.hora_inicio >= horaActualRedondeada) {
-          fechasMap.set(fecha, true);
-        }
-      } else {
-        fechasMap.set(fecha, true);
+      const fechaStr = h.fecha instanceof Date
+        ? h.fecha.toLocaleDateString('sv-SE')
+        : h.fecha;
+
+      if (fechaStr > todayStr) {
+        fechasSet.add(fechaStr);
+      } else if (fechaStr === todayStr && h.hora_inicio >= horaActual) {
+        fechasSet.add(fechaStr);
       }
     }
-  
-    return Array.from(fechasMap.keys());
+
+    return Array.from(fechasSet).sort();
   }
-  
-  
+
+
   async findHorariosPorFecha(idActividad, fecha, cantidadPersonas) {
     const today = new Date().toISOString().split('T')[0];
-  
+
     const whereClause = {
       id_actividad: idActividad,
       fecha,
@@ -92,26 +85,26 @@ class HorarioActividadService {
         [Op.gte]: cantidadPersonas
       }
     };
-  
+
     if (fecha === today) {
       const now = new Date();
       now.setHours(now.getHours() + 1);
       now.setMinutes(0); // redondea a la siguiente hora en punto
       now.setSeconds(0);
       now.setMilliseconds(0);
-      
+
       const horaRedondeada = now.toTimeString().slice(0, 5); // 'HH:mm'
-  
+
       whereClause.hora_inicio = {
         [Op.gte]: horaRedondeada
       };
     }
-  
+
     const horarios = await models.HorarioActividad.findAll({
       where: whereClause,
       include: ['actividad']
     });
-  
+
     return horarios;
   }
 
