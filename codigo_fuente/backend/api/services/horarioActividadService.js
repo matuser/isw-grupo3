@@ -38,7 +38,7 @@ class HorarioActividadService {
   async findFechasDisponibles(idActividad, cantidadPersonas) {
     const today = new Date();
     const maxDate = new Date();
-    maxDate.setDate(today.getDate() + 60);
+    maxDate.setDate(today.getDate() + 30);
   
     const horarios = await models.HorarioActividad.findAll({
       where: {
@@ -50,13 +50,37 @@ class HorarioActividadService {
           [Op.between]: [today, maxDate]
         }
       },
-      attributes: ['fecha'],
-      group: ['fecha'],
       raw: true
     });
   
-    return horarios.map(h => h.fecha); // solo devolvemos array de fechas
+    // Fecha de hoy en formato YYYY-MM-DD
+    const fechaHoyStr = today.toISOString().split('T')[0];
+  
+    // Hora actual redondeada a la siguiente hora en punto
+    const ahora = new Date();
+    ahora.setHours(ahora.getHours() + 1, 0, 0, 0);
+    const horaActualRedondeada = ahora.toTimeString().slice(0, 5); // "HH:mm"
+  
+    // Acá vamos a filtrar y agrupar las fechas válidas
+    const fechasMap = new Map();
+  
+    for (const h of horarios) {
+      const fecha = typeof h.fecha === 'string'
+        ? h.fecha
+        : h.fecha.toISOString().split('T')[0]; // por si acaso
+  
+      if (fecha === fechaHoyStr) {
+        if (h.hora_inicio >= horaActualRedondeada) {
+          fechasMap.set(fecha, true);
+        }
+      } else {
+        fechasMap.set(fecha, true);
+      }
+    }
+  
+    return Array.from(fechasMap.keys());
   }
+  
   
   async findHorariosPorFecha(idActividad, fecha, cantidadPersonas) {
     const today = new Date().toISOString().split('T')[0];
