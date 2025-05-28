@@ -35,6 +35,7 @@ Hemos propuesto la siguiente estructura de directorios en base a el desarrollo d
 | Reportes            | REP_<\<TPX\>>_<\<EX\>>.<\<ext\>>     | PDF          | /seguimiento_supervision/reportes             |
 | Manuales               | MAN_<\<nombreManual\>>.<\<ext\>>    | PDF                | /seguimiento_supervision                 |
 | Imagen               | IMG_<\<nombreItem\>>.<\<ext\>>    | PNG, JPG                | *                 |
+| Documentación código               | COD_<\<nombreDocumento\>>.<\<ext\>>    | PDF, DOCX                | /codigo_fuente                |
 
 
 ### Regla de nombrado
@@ -65,6 +66,7 @@ Hemos propuesto la siguiente estructura de directorios en base a el desarrollo d
 |MIN| Minutas|
 |DIAG| Diagramas|
 |REQ| Requerimientos|
+|COD| Código|
 
 
 ## Criterio de Línea Base
