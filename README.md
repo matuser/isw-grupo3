@@ -29,6 +29,7 @@ Hemos propuesto la siguiente estructura de directorios en base a el desarrollo d
 | Prototipos       | PRO_<\<nombrePantalla\>>.<\<ext\>>    | JPG, PNG, PDF, SVG         | /diseño/prototipos           |
 | Arquitectura      | ARQ_<\<nombreDiagrama\>>.<\<ext\>>   | PDF     | /diseño/arquitectura           |
 | Pruebas | PRUEBA_PLAN_<\<numeroEntregable\>>.<\<ext\>>    | XLSX     | /pruebas           |
+| Test Caja Negra | PRUEBA_CAJANEGRA_<\<numeroPrueba\>>.<\<ext\>> |  XLSX | /pruebas/TEST_CAJANEGRA
 | Diagrama        | DIAG_<\<nombreDiagrama\>>.<\<ext\>>     | DRAWIO                | *                     |
 | Requerimientos   | REQ_<\<nombreDocumento\>>.<\<ext\>>      | PDF    | /requerimientos           |
 | Minutas | MIN_DD_MM_AA_.<\<ext\>>      | PDF          | /seguimiento_supervision/minutas              |
