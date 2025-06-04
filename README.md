@@ -19,6 +19,7 @@ Hemos propuesto la siguiente estructura de directorios en base a el desarrollo d
 ├── seguimiento_supervision
 │   ├── minutas
 │   ├── reportes
+│   ├── retrospectivas
 ```
 
 ## Listado de ítems de configuración
@@ -37,6 +38,7 @@ Hemos propuesto la siguiente estructura de directorios en base a el desarrollo d
 | Manuales               | MAN_<\<nombreManual\>>.<\<ext\>>    | PDF                | /seguimiento_supervision                 |
 | Imagen               | IMG_<\<nombreItem\>>.<\<ext\>>    | PNG, JPG                | *                 |
 | Documentación código               | COD_<\<nombreDocumento\>>.<\<ext\>>    | PDF, DOCX                | /codigo_fuente                |
+| Retrospectivas     | RETRO_DD_MM_AA.<\<ext\>>    | PDF          | /seguimiento_supervision/retrospectivas             |
 
 
 ### Regla de nombrado
@@ -68,6 +70,7 @@ Hemos propuesto la siguiente estructura de directorios en base a el desarrollo d
 |DIAG| Diagramas|
 |REQ| Requerimientos|
 |COD| Código|
+|RETRO| Reunión retrospectiva|
 
 
 ## Criterio de Línea Base
